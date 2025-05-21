@@ -1,0 +1,33 @@
+{
+  "cli": {
+    "version": ">= 3.0.0"
+  },
+  "build": {
+    "preview": {
+      "android": {
+        "distribution": "internal",
+        "withoutCredentials": true
+      },
+      "autoIncrement": true
+    },
+    "production": {
+      "android": {
+        "distribution": "store"
+      },
+      "ios": {
+        "distribution": "store"
+      },
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "track": "internal"
+      },
+      "ios": {
+        "appleId": "yhaouzi@icloud.com"
+      }
+    }
+  }
+}

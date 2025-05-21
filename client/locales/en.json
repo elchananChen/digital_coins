@@ -1,0 +1,450 @@
+{
+    "login": {
+        "welcome": "Welcome",
+        "signInToAccount": "Sign in to your account",
+        "emailPlaceholder": "Email",
+        "passwordPlaceholder": "Password",
+        "signInButton": "Sign In",
+        "forgotPassword": "Forgot password ?",
+        "dontHaveAccount": "Don't have an account?",
+        "signUpLink": "Sign Up",
+        "emailRequired": "Email is required.",
+        "invalidEmailFormat": "Invalid email format.",
+        "passwordRequired": "Password is required.",
+        "passwordMinLength": "Password must be at least 6 characters."
+    },
+    "signupEmail": {
+        "signIn": "Sign Up",
+        "enterEmailToLoginOrCreate": "Simply enter your email create an account.",
+        "emailPlaceholder": "Email",
+        "agreeToTerms": "By using our mobile app, you agree to our ",
+        "termsOfUse": "Terms of Use",
+        "and": " and ",
+        "privacyPolicy": "Privacy Policy",
+        "continueButton": "Continue",
+        "emailRequired": "Email is required",
+        "invalidEmailFormat": "Invalid email format"
+    },
+    "verifyEmail": {
+        "verifyYourEmail": "Verify your email",
+        "emailSentInstructions": "We sent a verification email to. Please tap the link inside that email to continue.",
+        "checkInboxButton": "Check my inbox",
+        "resendEmailButton": "Resend email",
+        "resendInTimer": "Resend in {{timer}}s",
+        "successToastTitle": "Success",
+        "successToastMessage": "Email has been sent to \nyour inbox"
+    },
+    "signupPhoneNumber": {
+        "phoneNumber": "Phone Number",
+        "enterPhoneNumber": "Simply enter your phone number.",
+        "continueButton": "Continue",
+        "phoneNumberRequired": "Phone number is required",
+        "phoneNumberTooShort": "Phone number is too short"
+    },
+    "signupVerifyPhone": {
+        "confirm": "Confirm",
+        "enterCodeSentTo": "Please enter the 4-digit code just sent to {{phoneNumber}}",
+        "resendCode": "Resend code",
+        "resendCodeIn": "Resend code in 00:{{timer}}",
+        "successToastTitle": "Success",
+        "successToastMessage": "Code has been sent to your \nphone number"
+    },
+    "signupCreatePassword": {
+        "createPassword": "Create Password",
+        "chooseSecurePassword": "Choose a secure password that will be easy for you to remember.",
+        "passwordPlaceholder": "Password",
+        "hasAtLeast8Chars": "Has at least 8 characters",
+        "hasUppercaseOrSymbol": "Has an uppercase letter or symbol",
+        "hasNumber": "Has a number",
+        "continueButton": "Continue"
+    },
+    "signupPersonalInformation": {
+        "personalInfo": "Personal info",
+        "verifyApplicationDetails": "We ask for your personal information to verify your application details.",
+        "firstNamePlaceholder": "First Name",
+        "lastNamePlaceholder": "Last Name",
+        "dateOfBirthPlaceholder": "Date of birth (MM / DD / YYYY)",
+        "ssnPlaceholder": "Social security number (last 4 digits)",
+        "encryptionInfo": "We use 128-bit encryption for security, and this is only used for identity verification purpose.",
+        "continueButton": "Continue"
+    },
+    "backAuth": {
+        "step": "Step {{step}} of {{totalSteps}}"
+    },
+    "signupAddress": {
+        "homeAddress": "Home address",
+        "sendDebitCard": "Let us know where we should send your\nJuta Mastercard® Debit Card.",
+        "streetAddressPlaceholder": "Street address",
+        "cityPlaceholder": "City",
+        "statePlaceholder": "State",
+        "zipCodePlaceholder": "Zip Code",
+        "selectAnotherAddress": "Select Another Address",
+        "continueButton": "Continue"
+    },
+    "addressSearch": {
+        "searchAddress": "Search address",
+        "streetNameOnly": "Street name only (no city or country)",
+        "currentLocation": "Current location",
+        "address": "Address",
+        "loading": "Loading...",
+        "startSearching": "Start searching...",
+        "noResultsFound": "No results found",
+        "addressDetail": "Address Detail",
+        "aptSuiteNumber": "Please let us know if you have an apartment or unit number.",
+        "streetAddress": "Street address",
+        "aptSuiteNumberPlaceholder": "Apt / Suite number",
+        "continueButton": "Continue"
+    },
+    "signupAlmostThere": {
+        "almostThere": "Almost there!",
+        "ensureInfoCorrect": "Please take a moment to ensure all of the information you provide is correct.",
+        "fullLegalName": "Full Legal Name",
+        "dateOfBirth": "Date of Birth",
+        "socialSecurityNumber": "Social Security Number",
+        "residentialAddress": "Residential Address",
+        "edit": "Edit",
+        "continueButton": "Continue"
+    },
+    "membershipModal": {
+        "congratulations": "Congratulations",
+        "youAreMemberNow": "You are member now!",
+        "getReadyToStart": "Get ready to start using Juto for your daily financial app.",
+        "imReadyToStart": "I'm ready to start"
+    },
+    "portfolioScreen": {
+        "portfolio": "Portfolio",
+        "portfolioValue": "Portfolio Value",
+        "spentMoreThanLastMonth": "You've spent {{amount}} more than last month",
+        "market": "Market",
+        "seeAll": "See All",
+        "transactionsHistory": "Transactions History",
+        "price": "Price",
+        "amount": "Amount",
+        "time": "Time",
+        "transaction": "Transaction",
+        "noTradesFound": "No trades found"
+    },
+    "tradingHistoryScreen": {
+        "tradingHistory": "Trading History",
+        "showAll": "Show All",
+        "buyOnly": "Buy Only",
+        "sellOnly": "Sell Only",
+        "time": "Time",
+        "price": "Price",
+        "quantity": "Quantity",
+        "selectDate": "Select Date",
+        "selectOption": "Select option",
+        "noTradesFound": "No trades found"
+    },
+    "settings": {
+        "title": "Settings",
+		"toggle_theme": "Toggle Theme",
+		"change_language": "Change Language",
+		"personal_info": "Personal Information",
+		"bank_cards": "Bank & Cards",
+		"notifications": "Notifications",
+		"use_faceid": "Use Face ID to sign in",
+		"change_password": "Change Password",
+		"pin_settings": "PIN Settings",
+		"terms": "Terms & Conditions",
+		"privacy": "Privacy Policy",
+		"help": "Help",
+		"logout": "Logout",
+		"sections": {
+			"personal": "Personal Setting",
+			"security": "Security",
+			"support": "Support"
+		}
+    },
+    "camera": {
+        "requestingPermission": "Requesting camera permission...",
+        "noAccess": "No access to camera.",
+        "grantPermission": "Grant Permission"
+    },
+    "id": {
+        "front": "Front",
+        "back": "Back",
+        "ofYourId": "of your ID",
+        "centerYourFace": "Center your face",
+        "alignFace": "Align your face to the center of the selfie area and then take a photo",
+        "positionId": "Position all 4 corners of the front clearly in the frame."
+    },
+        "confirm": {
+          "processing": "Processing image...",
+          "title": "Check Quality",
+          "selfieInstruction": "Please make sure your whole face is in the picture with no blur or glare",
+          "idInstruction": "Please make sure your card details are clear to read with no blur or glare",
+          "continue": "Continue",
+          "retake": "Take a new photo"
+        },
+        "verify": {
+            "govTitle": "Government ID",
+            "govSubtitle": "Take a driver's license, national identity card or passport photo.",
+            "takePhoto": "Take a photo",
+            "selfieTitle": "Selfie Photo",
+            "selfieSubtitle": "Take a selfie to verify your identity.",
+            "takeSelfie": "Take a selfie",
+            "verifyButton": "Verify My Identity",
+            "driverLicense": "Driver's License",
+            "idCard": "National Identity Card",
+            "passport": "Passport",
+            "recommended": "Recommended",
+            "dialogTitle": "Thanks! We'll review your documents within 10 minutes",
+            "dialogBody": "Get ready to start using Tothor for your daily financial app.",
+            "gotIt": "Got it"
+        },
+        "cardForm": {
+            "headerTitle": "Add Credit / Debit Card",
+            "title": "Link your card",
+            "agreement": "By adding a new card, you agree to the",
+            "terms": "credit/debit card terms.",
+            "submit": "Add Card",
+            "processing": "Processing...",
+            "placeholders": {
+                "name": "Name on card",
+                "number": "Card number",
+                "expiry": "MM/YY",
+                "postal": "Postal Code"
+            },
+            "errors": {
+                "nameRequired": "Name is required.",
+                "cardRequired": "Card number is required.",
+                "cardLength": "Card number must be exactly 16 digits.",
+                "cardInvalid": "Invalid card number. Only Visa and Mastercard are accepted.",
+                "postalRequired": "Please enter a postal code.",
+                "postalInvalid": "Invalid postal code format.",
+                "expiryRequired": "Expiry date is required.",
+                "expiryFormat": "Invalid expiry date format (MM/YY).",
+                "expired": "Card is expired."
+            }
+        },
+        "cardAdded": {
+            "title": "All Done!",
+            "description": "Congratulations! Your card has been successfully added",
+            "done": "Done"
+        },
+        "paymentMethods": {
+            "title": "Payment Methods",
+            "cardTitle": "Credit / Debit Card",
+            "cardSubtitle": "Use any Visa or Mastercard to make small investments",
+            "wireTitle": "Wire Transfer / SEPA",
+            "wireSubtitle": "Send funds via bank wire transfer or SEPA transactions."
+        },
+        "pin": {
+            "confirmTitle": "Confirm PIN Change",
+            "setNew": "Set New PIN",
+            "instruction": "Enter a new 4-digit PIN or use Fingerprint",
+            "success": "PIN Successfully Changed!",
+            "invalidLength": "Please enter a 4-digit PIN.",
+            "fingerprintPrompt": "Confirm Fingerprint",
+            "fingerprintFallback": "Use PIN",
+            "fingerprintSuccess": "Fingerprint Confirmed!",
+            "fingerprintFail": "Fingerprint Authentication Failed.",
+            "fingerprintUnavailable": "Fingerprint Not Available."
+        },
+        "confirmPin": {
+            "header": "Confirm PIN",
+            "title": "Confirm PIN",
+            "subtitle": "Re-enter your PIN",
+            "success": "✅ PIN Confirmed!",
+            "failure": "❌ PINs do not match. Try again.",
+            "noPinError": "❌ Error: No PIN received. Try again."
+        },
+        "createPin": {
+            "header": "Create PIN",
+            "title": "Create your PIN",
+            "subtitle": "Create a four-digit passcode to secure your account"
+        },
+        "profile": {
+            "header": "Profile",
+            "todo": {
+                "idStep1Title": "Verify your identity #1",
+                "idStep2Title": "Verify your identity #2",
+                "idStep3Title": "Verify your identity #3",
+                "idStepDescription": "Take a government ID & selfie photo to get verified",
+                "verifyNow": "Verify now"
+            },
+            "settings": {
+                "savingGoals": "Saving Goals",
+                "start": "+Start",
+                "budgets": "Budgets",
+                "bundles": "Bundles",
+                "invite": "Invite Friends",
+                "earn": "Earn $250",
+                "settings": "Settings",
+                "logout": "Logout"
+            }
+        },
+        "faceId": {
+            "header": "Set Up Face ID",
+            "title": "Enable Face ID for Quick Access",
+            "subtitle": "Use your Face ID to unlock your account securely and proceed faster.",
+            "enable": "Enable Face ID",
+            "skip": "Skip, I'll do this later",
+            "alertTitle": "Biometric Authentication",
+            "notSupported": "Your device does not support biometrics.",
+            "notEnrolled": "No Face ID found. Please set up Face ID first.",
+            "prompt": "Set up Face ID",
+            "fallback": "Use PIN instead",
+            "successTitle": "Success",
+            "successMessage": "Face ID setup complete.",
+            "failTitle": "Authentication Failed",
+            "failMessage": "Please try again."
+        },
+        "touchId": {
+            "header": "Set Up Touch ID",
+            "title": "Touch ID for faster payment",
+            "subtitle": "Enable Touch ID to let you login & proceed your transactions faster.",
+            "enable": "Enable Touch ID",
+            "skip": "Skip, I'll do this later",
+            "alertTitle": "Biometric Authentication",
+            "notSupported": "Your device does not support biometrics.",
+            "notEnrolled": "No fingerprints found. Please add a fingerprint first.",
+            "prompt": "Set up Touch ID",
+            "fallback": "Use PIN instead",
+            "successTitle": "Success",
+            "successMessage": "Touch ID setup complete.",
+            "failTitle": "Authentication Failed",
+            "failMessage": "Please try again."
+        },
+        "pinSettings": {
+            "title": "Pin Settings",
+            "changePin": "Change PIN",
+            "createPin": "Create PIN",
+            "faceId": "Add / Change Face ID",
+            "touchId": "Add / Change Touch ID"
+        },
+        "home": {
+            "safeToSpend": "Safe-to-spend",
+            "lastUpdated": "Updated 2 mins ago",
+            "actions": {
+                "topup": "Top up",
+                "transfer": "Transfer",
+                "history": "History"
+            },
+            "recommended": "Recommended Bundles",
+            "bundleNote": "There are 4 recommended bundles",
+            "timeframe": "Past Month",
+            "bundles": {
+                "maga": "MAGA Bundle",
+                "tothor": "Tothor Bundle",
+                "earth": "Earth Bundle",
+                "doge": "DOGE Bundle"
+            }
+        },
+        "investments": {
+            "header": "investments",
+            "bundleTitle": "Make America Great Again",
+            "bundleDescription": "Invest in the future of America with our exclusive bundle.",
+            "bestBundles": "Top Performing Bundle",
+            "ytd": "10% YTD",
+            "risk": "Medium Risk",
+            "bundlesTitle": "Bundles",
+            "bundlesSubtitle": "Diversify your portfolio by investing in the most promising crypto themes"
+        },
+        "layout": {
+            "tabs": {
+                "home": "Home",
+                "markets": "Markets",
+                "tothor": "Tothor",
+                "investment": "Investment",
+                "profile": "Profile"
+            }
+        },
+        "notifications": {
+            "title": "Notifications",
+            "remove": "Remove",
+            "items": {
+                "waiting": {
+                    "title": "Order Waiting for approval",
+                    "message": "Your order has been received and will be checked soon by our team",
+                    "timeAgo": "5 mins ago"
+                },
+                "shipped": {
+                    "title": "Order Shipped",
+                    "message": "Your order is on the way!",
+                    "timeAgo": "10 mins ago"
+                },
+                "success": {
+                    "title": "Payment Successful",
+                    "message": "Your payment was received successfully.",
+                    "timeAgo": "5 hours ago"
+                }
+            }
+        },
+        "tothor": {
+            "heading": "Save Money With Tothor",
+            "description": "Tothor is a crypto token that computes interest over time. Hold and watch your assets grow effortlessly! 🚀",
+            "tokenTitle": "The Tothor Token (TTS$)",
+            "currentPrice": "Current Price",
+            "tokenEquation": "1 Tothor Token = $0.722",
+            "cta": "Start Saving With Tothor"
+        },
+        "dropdown": {
+            "entry_date": "Entry date",
+            "exit_date": "Exit date",
+            "lock_for": "Lock for:",
+            "months": "months",
+            "months_3": "3 months",
+            "months_6": "6 months",
+            "months_12": "12 months",
+            "expected_interest": "Expected interest",
+            "buy_now": "Buy now!",
+            "alert": {
+                "soon_title": "Coming Soon",
+                "soon_msg": "Buying option will be added soon, please wait :)",
+                "missing_title": "Missing Fields",
+                "missing_msg": "Please make sure you chose both a value and a time you want to lock it for"
+            }
+        },
+        "coinScreen": {
+            "tabs": {
+                "price": "Price",
+                "depth": "Depth",
+                "info": "Info"
+            }
+        },
+        "markets": {
+            "title": "Markets",
+            "search_placeholder": "Search Crypto..."
+        },
+        "coinInfo": {
+            "about": "About",
+            "read_more": "Read More",
+            "description": "Description",
+            "market_cap": "Market Cap",
+            "circulating_supply": "Circulating Supply",
+            "total_supply": "Total Supply",
+            "max_supply": "Max Supply",
+            "website": "Website",
+            "loading": "Loading Coin Data..."
+        },
+        "coinOrderHistory": {
+            "order_book": "Order Book",
+            "trade_history": "Trade History",
+            "buy": "Buy",
+            "sell": "Sell"
+        },
+        "orderBook": {
+            "price": "Price",
+            "amount": "Amount",
+            "usdt": "USDT",
+            "coin": "Coin"
+        },
+        "trade": {
+            "buy": "Buy",
+            "sell": "Sell",
+            "selectType": "Select transaction type",
+            "available": "Avbl",
+            "error": {
+                "selectType": "Please select a transaction type",
+                "enterAmount": "Please enter the amount",
+                "invalidAmount": "Invalid amount. Please enter a valid amount from 0 to {{limit}}"
+            },
+            "success": {
+                "title": "Congratulations! You have successfully {{action}} {{amount}} {{symbol}}",
+                "buy": "bought",
+                "sell": "sold"
+            }
+        }
+    }

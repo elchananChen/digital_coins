@@ -1,0 +1,65 @@
+{
+  "expo": {
+    "name": "PinSimulator",
+    "slug": "PinSim",
+    "version": "1.0.0",
+    "newArchEnabled": true,
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "userInterfaceStyle": "light",
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ],
+      "expo-sqlite",
+      "expo-router",
+      "expo-localization"
+    ],
+    "orientation": "portrait",
+    "icon": "./assets/PinSimulator.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "buildNumber": "1",
+      "bundleIdentifier": "com.PinSimulator.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "icon": "./assets/PinSimulator.png"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/PinSimulatorAndroid.png",
+        "backgroundColor": "#ffffff"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": ""
+        }
+      },
+      "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
+      "package": "com.PinSimulator.app"
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {}
+    },
+    "owner": "elcha"
+  }
+}

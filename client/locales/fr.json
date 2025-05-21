@@ -1,0 +1,450 @@
+{
+    "login": {
+        "welcome": "Bienvenue",
+        "signInToAccount": "Connectez-vous à votre compte",
+        "emailPlaceholder": "Courriel",
+        "passwordPlaceholder": "Mot de passe",
+        "signInButton": "Se connecter",
+        "forgotPassword": "Mot de passe oublié ?",
+        "dontHaveAccount": "Vous n'avez pas de compte ?",
+        "signUpLink": "S'inscrire",
+        "emailRequired": "L'e-mail est requis.",
+        "invalidEmailFormat": "Format d'e-mail invalide.",
+        "passwordRequired": "Le mot de passe est requis.",
+        "passwordMinLength": "Le mot de passe doit contenir au moins 6 caractères."
+    },
+    "signupEmail": {
+        "signIn": "S'inscrire",
+		"enterEmailToLoginOrCreate": "Il vous suffit de saisir votre e-mail pour créer un compte.",
+        "emailPlaceholder": "Courriel",
+        "agreeToTerms": "En utilisant notre application mobile, vous acceptez nos ",
+        "termsOfUse": "Conditions d'utilisation",
+        "and": " et notre ",
+        "privacyPolicy": "Politique de confidentialité ",
+        "continueButton": "Continuer",
+        "emailRequired": "L'e-mail est requis",
+        "invalidEmailFormat": "Format d'e-mail invalide"
+    },
+    "verifyEmail": {
+        "verifyYourEmail": "Vérifiez votre email",
+        "emailSentInstructions": "Nous avons envoyé un e-mail de vérification à. Veuillez cliquer sur le lien dans cet e-mail pour continuer.",
+        "checkInboxButton": "Vérifier ma boîte de réception",
+        "resendEmailButton": "Renvoyer l'e-mail",
+        "resendInTimer": "Renvoyer dans {{timer}}s",
+        "successToastTitle": "Succès",
+        "successToastMessage": "L'e-mail a été envoyé dans votre \nboîte de réception"
+    },
+    "signupPhoneNumber": {
+        "phoneNumber": "Numéro de téléphone",
+        "enterPhoneNumber": "Entrez simplement votre numéro de téléphone.",
+        "continueButton": "Continuer",
+        "phoneNumberRequired": "Le numéro de téléphone est requis",
+        "phoneNumberTooShort": "Le numéro de téléphone est trop court"
+    },
+    "signupVerifyPhone": {
+        "confirm": "Confirmer",
+        "enterCodeSentTo": "Veuillez entrer le code à 4 chiffres qui vient d'être envoyé au {{phoneNumber}}",
+        "resendCode": "Renvoyer le code",
+        "resendCodeIn": "Renvoyer le code dans 00:{{timer}}",
+        "successToastTitle": "Succès",
+        "successToastMessage": "Le code a été envoyé à votre \nnuméro de téléphone"
+    },
+    "signupCreatePassword": {
+        "createPassword": "Créer un mot de passe",
+        "chooseSecurePassword": "Choisissez un mot de passe sécurisé qui sera facile à retenir pour vous.",
+        "passwordPlaceholder": "Mot de passe",
+        "hasAtLeast8Chars": "A au moins 8 caractères",
+        "hasUppercaseOrSymbol": "A une lettre majuscule ou un symbole",
+        "hasNumber": "A un chiffre",
+        "continueButton": "Continuer"
+    },
+    "signupPersonalInformation": {
+        "personalInfo": "Informations personnelles",
+        "verifyApplicationDetails": "Nous vous demandons vos informations personnelles pour vérifier les détails de votre candidature.",
+        "firstNamePlaceholder": "Prénom",
+        "lastNamePlaceholder": "Nom de famille",
+        "dateOfBirthPlaceholder": "Date de naissance (MM / JJ / AAAA)",
+        "ssnPlaceholder": "Numéro de sécurité sociale (4 derniers chiffres)",
+        "encryptionInfo": "Nous utilisons un cryptage 128 bits pour la sécurité, et ceci est uniquement utilisé à des fins de vérification d'identité.",
+        "continueButton": "Continuer"
+    },
+    "backAuth": {
+        "step": "Étape {{step}} sur {{totalSteps}}"
+    },
+    "signupAddress": {
+        "homeAddress": "Adresse du domicile",
+        "sendDebitCard": "Indiquez-nous où nous devons envoyer votre\ncarte de débit Juta Mastercard®.",
+        "streetAddressPlaceholder": "Adresse de la rue",
+        "cityPlaceholder": "Ville",
+        "statePlaceholder": "État",
+        "zipCodePlaceholder": "Code Postal",
+        "selectAnotherAddress": "Sélectionner une autre adresse",
+        "continueButton": "Continuer"
+    },
+    "addressSearch": {
+        "searchAddress": "Rechercher une adresse",
+        "streetNameOnly": "Nom de la rue uniquement (sans ville ni pays)",
+        "currentLocation": "Localisation actuelle",
+        "address": "Adresse",
+        "loading": "Chargement...",
+        "startSearching": "Commencer la recherche...",
+        "noResultsFound": "Aucun résultat trouvé",
+        "addressDetail": "Détail de l'adresse",
+        "aptSuiteNumber": "Veuillez nous indiquer si vous avez un appartement ou un numéro d'unité.",
+        "streetAddress": "Adresse de la rue",
+        "aptSuiteNumberPlaceholder": "Appartement / Numéro de suite",
+        "continueButton": "Continuer"
+    },
+    "signupAlmostThere": {
+        "almostThere": "Presque là !",
+        "ensureInfoCorrect": "Veuillez prendre un instant pour vous assurer que toutes les informations fournies sont correctes.",
+        "fullLegalName": "Nom légal complet",
+        "dateOfBirth": "Date de naissance",
+        "socialSecurityNumber": "Numéro de sécurité sociale",
+        "residentialAddress": "Adresse résidentielle",
+        "edit": "Modifier",
+        "continueButton": "Continuer"
+    },
+    "membershipModal": {
+        "congratulations": "Félicitations",
+        "youAreMemberNow": "Vous êtes maintenant membre !",
+        "getReadyToStart": "Préparez-vous à utiliser Juto pour votre application financière quotidienne.",
+        "imReadyToStart": "Je suis prêt à commencer"
+    },
+    "portfolioScreen": {
+        "portfolio": "Portefeuille",
+        "portfolioValue": "Valeur du portefeuille",
+        "spentMoreThanLastMonth": "Vous avez dépensé {{amount}} de plus que le mois dernier",
+        "market": "Marché",
+        "seeAll": "Voir tout",
+        "transactionsHistory": "Historique des transactions",
+        "price": "Prix",
+        "amount": "Montant",
+        "time": "Heure",
+        "transaction": "Transaction",
+        "noTradesFound": "Aucune transaction trouvée"
+    },
+    "tradingHistoryScreen": {
+        "tradingHistory": "Historique des transactions",
+        "showAll": "Tout afficher",
+        "buyOnly": "Acheter seulement",
+        "sellOnly": "Vendre seulement",
+        "time": "Heure",
+        "price": "Prix",
+        "quantity": "Quantité",
+        "selectDate": "Sélectionner une date",
+        "selectOption": "Sélectionner une option",
+        "noTradesFound": "Aucune transaction trouvée"
+    },
+    "settings": {
+        "title": "Paramètres",
+		"toggle_theme": "Changer le thème",
+		"change_language": "Changer de langue",
+		"personal_info": "Informations personnelles",
+		"bank_cards": "Banque & Cartes",
+		"notifications": "Notifications",
+		"use_faceid": "Utiliser Face ID",
+		"change_password": "Changer le mot de passe",
+		"pin_settings": "Paramètres du code PIN",
+		"terms": "Conditions d'utilisation",
+		"privacy": "Politique de confidentialité",
+		"help": "Aide",
+		"logout": "Se déconnecter",
+		"sections": {
+			"personal": "Paramètres personnels",
+			"security": "Sécurité",
+			"support": "Assistance"
+		}
+    },
+    "camera": {
+        "requestingPermission": "Demande d'autorisation de la caméra...",
+        "noAccess": "Pas d'accès à la caméra.",
+        "grantPermission": "Accorder l'autorisation"
+    },
+    "id": {
+        "front": "Avant",
+        "back": "Arrière",
+        "ofYourId": "de votre pièce d'identité",
+        "centerYourFace": "Centre ton visage",
+        "alignFace": "Alignez votre visage au centre de la zone selfie puis prenez une photo",
+        "positionId": "Placez les 4 coins du recto clairement dans le cadre."
+    },
+    "confirm": {
+        "processing": "Traitement de l'image...",
+        "title": "Vérifiez la qualité",
+        "selfieInstruction": "Veuillez vous assurer que votre visage est entièrement visible sans flou ni reflet",
+        "idInstruction": "Veuillez vous assurer que les détails de votre carte sont clairement lisibles sans flou ni reflet",
+        "continue": "Continuer",
+        "retake": "Prendre une nouvelle photo"
+      },
+      "verify": {
+		"govTitle": "Pièce d'identité",
+		"govSubtitle": "Prenez une photo de votre permis, carte d'identité ou passeport.",
+		"takePhoto": "Prendre une photo",
+		"selfieTitle": "Photo selfie",
+		"selfieSubtitle": "Prenez un selfie pour vérifier votre identité.",
+		"takeSelfie": "Prendre un selfie",
+		"verifyButton": "Vérifier mon identité",
+		"driverLicense": "Permis de conduire",
+		"idCard": "Carte d'identité nationale",
+		"passport": "Passeport",
+		"recommended": "Recommandé",
+		"dialogTitle": "Merci ! Nous examinerons vos documents sous 10 minutes",
+		"dialogBody": "Préparez-vous à utiliser Tothor comme application financière quotidienne.",
+		"gotIt": "Compris"
+	},
+    "cardForm": {
+		"headerTitle": "Ajouter une carte de crédit / débit",
+		"title": "Lier votre carte",
+		"agreement": "En ajoutant une nouvelle carte, vous acceptez les",
+		"terms": "conditions de la carte de crédit/débit.",
+		"submit": "Ajouter la carte",
+		"processing": "Traitement en cours...",
+		"placeholders": {
+			"name": "Nom sur la carte",
+			"number": "Numéro de carte",
+			"expiry": "MM/AA",
+			"postal": "Code postal"
+		},
+		"errors": {
+			"nameRequired": "Le nom est requis.",
+			"cardRequired": "Le numéro de carte est requis.",
+			"cardLength": "Le numéro de carte doit contenir exactement 16 chiffres.",
+			"cardInvalid": "Numéro de carte invalide. Seules les cartes Visa et Mastercard sont acceptées.",
+			"postalRequired": "Veuillez entrer un code postal.",
+			"postalInvalid": "Format de code postal invalide.",
+			"expiryRequired": "La date d’expiration est requise.",
+			"expiryFormat": "Format de date invalide (MM/AA).",
+			"expired": "La carte est expirée."
+		}
+	},
+    "cardAdded": {
+		"title": "C’est fait !",
+		"description": "Félicitations ! Votre carte a été ajoutée avec succès",
+		"done": "Terminé"
+	},	
+    "paymentMethods": {
+		"title": "Méthodes de paiement",
+		"cardTitle": "Carte de crédit / débit",
+		"cardSubtitle": "Utilisez une carte Visa ou Mastercard pour effectuer de petits investissements",
+		"wireTitle": "Virement bancaire / SEPA",
+		"wireSubtitle": "Envoyez des fonds via un virement bancaire ou une transaction SEPA."
+	},
+    "pin": {
+		"confirmTitle": "Confirmer le changement de code",
+		"setNew": "Définir un nouveau code PIN",
+		"instruction": "Entrez un code PIN à 4 chiffres ou utilisez l'empreinte",
+		"success": "Code PIN modifié avec succès !",
+		"invalidLength": "Veuillez entrer un code PIN à 4 chiffres.",
+		"fingerprintPrompt": "Confirmer par empreinte",
+		"fingerprintFallback": "Utiliser le code PIN",
+		"fingerprintSuccess": "Empreinte confirmée !",
+		"fingerprintFail": "Échec de l'authentification par empreinte.",
+		"fingerprintUnavailable": "Empreinte digitale non disponible."
+	},
+    "confirmPin": {
+		"header": "Confirmer le code PIN",
+		"title": "Confirmer le code PIN",
+		"subtitle": "Saisissez à nouveau votre code PIN",
+		"success": "✅ Code PIN confirmé !",
+		"failure": "❌ Les codes PIN ne correspondent pas. Réessayez.",
+		"noPinError": "❌ Erreur : aucun code PIN reçu. Veuillez réessayer."
+	},
+    "createPin": {
+		"header": "Créer un code PIN",
+		"title": "Créez votre code PIN",
+		"subtitle": "Créez un code PIN à quatre chiffres pour sécuriser votre compte"
+	},
+    "profile": {
+		"header": "Profil",
+		"todo": {
+			"idStep1Title": "Vérifiez votre identité #1",
+			"idStep2Title": "Vérifiez votre identité #2",
+			"idStep3Title": "Vérifiez votre identité #3",
+			"idStepDescription": "Prenez une photo d'identité et un selfie pour être vérifié",
+			"verifyNow": "Vérifier maintenant"
+		},
+		"settings": {
+			"savingGoals": "Objectifs d'épargne",
+			"start": "+Commencer",
+			"budgets": "Budgets",
+			"bundles": "Abonnements",
+			"invite": "Inviter des amis",
+			"earn": "Gagnez 250 $",
+			"settings": "Paramètres",
+			"logout": "Déconnexion"
+		}
+	},
+    "faceId": {
+		"header": "Configurer Face ID",
+		"title": "Activez Face ID pour un accès rapide",
+		"subtitle": "Utilisez Face ID pour sécuriser votre compte et y accéder plus rapidement.",
+		"enable": "Activer Face ID",
+		"skip": "Passer, je ferai cela plus tard",
+		"alertTitle": "Authentification biométrique",
+		"notSupported": "Votre appareil ne prend pas en charge la biométrie.",
+		"notEnrolled": "Aucun Face ID trouvé. Veuillez d'abord configurer Face ID.",
+		"prompt": "Configurer Face ID",
+		"fallback": "Utiliser le code PIN à la place",
+		"successTitle": "Succès",
+		"successMessage": "Configuration de Face ID terminée.",
+		"failTitle": "Échec de l'authentification",
+		"failMessage": "Veuillez réessayer."
+	},
+    "touchId": {
+		"header": "Configurer Touch ID",
+		"title": "Touch ID pour un paiement plus rapide",
+		"subtitle": "Activez Touch ID pour vous connecter et effectuer vos transactions plus rapidement.",
+		"enable": "Activer Touch ID",
+		"skip": "Passer, je le ferai plus tard",
+		"alertTitle": "Authentification biométrique",
+		"notSupported": "Votre appareil ne prend pas en charge la biométrie.",
+		"notEnrolled": "Aucune empreinte trouvée. Veuillez d'abord en enregistrer une.",
+		"prompt": "Configurer Touch ID",
+		"fallback": "Utiliser le code PIN",
+		"successTitle": "Succès",
+		"successMessage": "Touch ID configuré avec succès.",
+		"failTitle": "Échec de l'authentification",
+		"failMessage": "Veuillez réessayer."
+	},
+    "pinSettings": {
+		"title": "Paramètres du code PIN",
+		"changePin": "Changer le code PIN",
+		"createPin": "Créer un code PIN",
+		"faceId": "Ajouter / Modifier Face ID",
+		"touchId": "Ajouter / Modifier Touch ID"
+	},
+    "home": {
+		"safeToSpend": "Disponible à dépenser",
+		"lastUpdated": "Mis à jour il y a 2 minutes",
+		"actions": {
+			"topup": "Recharger",
+			"transfer": "Transférer",
+			"history": "Historique"
+		},
+		"recommended": "Portefeuilles recommandés",
+		"bundleNote": "Il y a 4 portefeuilles recommandés",
+		"timeframe": "Le mois dernier",
+		"bundles": {
+			"maga": "Portefeuille MAGA",
+			"tothor": "Portefeuille Tothor",
+			"earth": "Portefeuille Terre",
+			"doge": "Portefeuille DOGE"
+		}
+	},
+    "investments": {
+		"header": "investissements",
+		"bundleTitle": "Rendre l'Amérique Grande à Nouveau",
+		"bundleDescription": "Investissez dans l'avenir de l'Amérique avec notre bundle exclusif.",
+		"bestBundles": "Portefeuille le plus performant",
+		"ytd": "10% Annuel",
+		"risk": "Risque moyen",
+		"bundlesTitle": "Portefeuilles",
+		"bundlesSubtitle": "Diversifiez votre portefeuille avec les thèmes crypto les plus prometteurs"
+	},
+    "layout": {
+		"tabs": {
+			"home": "Accueil",
+			"markets": "Marchés",
+			"tothor": "Tothor",
+			"investment": "Investir",
+			"profile": "Profil"
+		}
+	},
+    "notifications": {
+		"title": "Notifications",
+		"remove": "Supprimer",
+		"items": {
+			"waiting": {
+				"title": "Commande en attente d'approbation",
+				"message": "Votre commande a été reçue et sera bientôt vérifiée par notre équipe",
+				"timeAgo": "il y a 5 minutes"
+			},
+			"shipped": {
+				"title": "Commande expédiée",
+				"message": "Votre commande est en route !",
+				"timeAgo": "il y a 10 minutes"
+			},
+			"success": {
+				"title": "Paiement réussi",
+				"message": "Votre paiement a été reçu avec succès.",
+				"timeAgo": "il y a 5 heures"
+			}
+		}
+	},
+    "tothor": {
+		"heading": "Économisez avec Tothor",
+		"description": "Tothor est un jeton crypto qui génère des intérêts au fil du temps. Gardez-le et regardez vos actifs croître sans effort ! 🚀",
+		"tokenTitle": "Le jeton Tothor (TTS$)",
+		"currentPrice": "Prix actuel",
+		"tokenEquation": "1 Jeton Tothor = 0,722 $",
+		"cta": "Commencer à épargner avec Tothor"
+	},
+    "dropdown": {
+		"entry_date": "Date d'entrée",
+		"exit_date": "Date de sortie",
+		"lock_for": "Bloquer pendant :",
+		"months": "mois",
+		"months_3": "3 mois",
+		"months_6": "6 mois",
+		"months_12": "12 mois",
+		"expected_interest": "Intérêt attendu",
+		"buy_now": "Acheter maintenant !",
+		"alert": {
+			"soon_title": "Bientôt disponible",
+			"soon_msg": "L'option d'achat sera ajoutée bientôt, veuillez patienter :)",
+			"missing_title": "Champs manquants",
+			"missing_msg": "Veuillez choisir une valeur et une durée de verrouillage"
+		}
+	},
+    "coinScreen": {
+		"tabs": {
+			"price": "Prix",
+			"depth": "Profondeur",
+			"info": "Infos"
+		}
+	},
+    "markets": {
+		"title": "Marchés",
+		"search_placeholder": "Rechercher une crypto..."
+	},
+    "coinInfo": {
+		"about": "À propos de",
+		"read_more": "Lire plus",
+		"description": "Description",
+		"market_cap": "Capitalisation boursière",
+		"circulating_supply": "Offre en circulation",
+		"total_supply": "Offre totale",
+		"max_supply": "Offre maximale",
+		"website": "Site Web",
+		"loading": "Chargement des données de la cryptomonnaie..."
+	},
+    "coinOrderHistory": {
+		"order_book": "Carnet d'ordres",
+		"trade_history": "Historique des transactions",
+		"buy": "Acheter",
+		"sell": "Vendre"
+	},
+    "orderBook": {
+        "price": "Prix",
+        "amount": "Quantité",
+        "usdt": "USDT",
+        "coin": "Pièce"
+    },
+        "trade": {
+            "buy": "Acheter",
+            "sell": "Vendre",
+            "selectType": "Sélectionner le type de transaction",
+            "available": "Disponible",
+            "error": {
+                "selectType": "Veuillez sélectionner un type de transaction",
+                "enterAmount": "Veuillez entrer un montant",
+                "invalidAmount": "Montant invalide. Veuillez entrer une valeur entre 0 et {{limit}}"
+                },
+                "success": {
+                    "title": "Félicitations ! Vous avez {{action}} {{amount}} {{symbol}} avec succès",
+                    "buy": "acheté",
+                    "sell": "vendu"
+            }
+    }
+}
