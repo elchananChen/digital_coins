@@ -1,0 +1,28 @@
+{
+  "name": "server_movies_youtube",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "rimraf dist && npx tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc --noEmit && tsx src/app.ts",
+    "dev": "tsc --noEmit --watch & tsx watch src/app.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/morgan": "^1.9.9",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@types/express": "^5.0.1",
+    "axios": "^1.8.4",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "morgan": "^1.10.0"
+  }
+}
