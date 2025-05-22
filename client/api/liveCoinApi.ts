@@ -1,5 +1,6 @@
-const BASE_API_LIVE_COIN_URL = 'http://172.20.10.2:3000/api/live_coin';
+const BASE_API_LIVE_COIN_URL = process.env.BASE_API_LIVE_COIN_URL;
 
+// const BASE_API_LIVE_COIN_URL = 'http://172.20.10.2:3000/api/live_coin';
 export const fetchCoinList = async () => {
   try {
     const response = await fetch(`${BASE_API_LIVE_COIN_URL}/coins/list`, {
@@ -17,19 +18,19 @@ export const fetchCoinList = async () => {
         meta: false,
       }),
     });
+
     const data = await response.json();
 
     console.log(data);
-    console.log('baba');
 
     if (!data || data.length === 0) {
       console.warn(`No data for coin list `);
-      return []; // Return empty array instead of data which is empty
+      return [];
     }
 
-    return data; // This was missing - you need to return the data!
+    return data;
   } catch (error) {
     console.error('Error fetching  :', error);
-    throw error; // Throw the error so React Query can handle it properly
+    throw error;
   }
 };

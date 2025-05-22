@@ -6,6 +6,7 @@ import React from 'react';
 
 // 📌 Regular Imports (SettingsScreen Now Loads Instantly)
 import LiveCoin from './LiveCoin';
+import Bitstamp from './Bitstamp';
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,7 @@ const StackNavigator = () => {
           headerShown: false,
           detachPreviousScreen: true,
         }}>
+        <Stack.Screen name="bitstamp" component={Bitstamp} />
         <Stack.Screen name="liveCoin" component={LiveCoin} />
       </Stack.Navigator>
     </NavigationContainer>

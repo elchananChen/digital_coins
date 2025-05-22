@@ -1,4 +1,4 @@
-import axios, { Axios, AxiosError, isAxiosError } from "axios";
+import axios, { isAxiosError } from "axios";
 import dotenv from "dotenv";
 import { Request, Response } from "express";
 dotenv.config();
@@ -10,8 +10,8 @@ export const coinsList = async (
   res: Response
 ) => {
   if (!process.env.LiveCoinKey) throw new Error("api key missing!");
-  console.log("body:", req.body);
-  console.log("apiKey:", apiKey);
+  // console.log("body:", req.body);
+  // console.log("apiKey:", apiKey);
 
   try {
     const response = await axios.post(
@@ -24,7 +24,7 @@ export const coinsList = async (
       }
     );
 
-    console.log(response.data);
+    // console.log(response.data);
     res.status(response.status).send(response.data);
   } catch (error) {
     // console.error("Request failed:", error);

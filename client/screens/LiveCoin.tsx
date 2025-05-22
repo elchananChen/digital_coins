@@ -18,14 +18,14 @@ export default function LiveCoin() {
     queryFn: fetchCoinList,
   });
 
-  console.log('Coins list in component:', coinsList);
+  // console.log('Coins list in component:', coinsList);
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <Spinner className="fill-black pt-96" />;
 
   if (error) {
     return (
-      <Box>
-        <Text>Error: {error.message || 'Something went wrong'}</Text>
+      <Box className="mt-96">
+        <Text className="text-red-600">Error: {error.message || 'Something went wrong'}</Text>
       </Box>
     );
   }

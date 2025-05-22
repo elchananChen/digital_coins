@@ -55,6 +55,8 @@
     "babel-plugin-module-resolver": "^5.0.2",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.5.0",
     "expo": "~52.0.38",
     "expo-camera": "~16.0.18",
     "expo-dev-client": "~5.0.20",
