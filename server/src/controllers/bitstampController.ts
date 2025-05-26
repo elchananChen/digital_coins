@@ -28,8 +28,6 @@ export const getOrderBook = async (req: Request, res: Response) => {
       `https://www.bitstamp.net/api/v2/order_book/${market_symbol}`
     );
 
-    // console.log(response.data);
-
     res.status(200).json(response.data);
   } catch (error) {
     if (isAxiosError(error)) {

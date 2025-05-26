@@ -1,12 +1,10 @@
-import { View, Text } from 'react-native'
+import { Text } from 'react-native';
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCoinBaseBookOrder } from '@/api/coinBaseApi';
 import { Spinner } from '@/components/ui/spinner';
-import { ScrollView } from 'react-native-gesture-handler';
-import { H1, H2, H3 } from '@expo/html-elements';
+import { H2, H3 } from '@expo/html-elements';
 import { Box } from '@/components/ui/box';
-import { format } from 'date-fns';
 
 type CoinBaseBookOrderProps = {
   productId: string;
@@ -14,8 +12,7 @@ type CoinBaseBookOrderProps = {
 };
 
 const CoinBaseBookOrder = ({ coinName, productId }: CoinBaseBookOrderProps) => {
-
-    const {
+  const {
     data: orderBook,
     isLoading,
     error,
@@ -45,8 +42,8 @@ const CoinBaseBookOrder = ({ coinName, productId }: CoinBaseBookOrderProps) => {
     );
   }
   // const isoTime = "2025-05-22T14:13:10.683276Z";
-const date = new Date(orderBook.time);
-const timeStr = date.toTimeString().split(' ')[0];
+  const date = new Date(orderBook.time);
+  const timeStr = date.toTimeString().split(' ')[0];
 
   return (
     <Box className="mb-20 py-20 ps-9">
@@ -67,7 +64,7 @@ const timeStr = date.toTimeString().split(' ')[0];
         </Box>
       ))}
     </Box>
-  )
-}
+  );
+};
 
-export default CoinBaseBookOrder
+export default CoinBaseBookOrder;

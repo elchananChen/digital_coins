@@ -2,4 +2,6 @@
 
 "live coin watch" : https://livecoinwatch.github.io/lcw-api-docs/#resources
 
-"bitstamp" : https://www.bitstamp.net/api/
+"bitstamp" : https://www.bitstamp.net/api
+
+"coinbase" : https://docs.cdp.coinbase.com/exchange/reference/exchangerestapi_getproductbook
