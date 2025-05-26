@@ -45,14 +45,14 @@ const KrakenBookOrder = ({ coinName, pairSymbol }: KrakenBookOrderProps) => {
   const pairKey = Object.keys(orderBookData)[0];
   const { bids, asks } = orderBookData[pairKey];
 
-  const now = new Date();
-  const time = format(now, 'HH:mm:ss');
+  // const now = new Date();
+  // const time = format(now, 'HH:mm:ss');
 
   return (
     <ScrollView>
       <Box className="mb-20 py-20 ps-9">
         <H2>Order Book for {coinName}</H2>
-        <H3>updated at {time}</H3>
+        {/* <H3>updated at {time}</H3> */}
         <H3>Buy Orders</H3>
         {bids.slice(0, 4).map((pair: any, index: number) => (
           <Box className="mt-5" key={index}>
