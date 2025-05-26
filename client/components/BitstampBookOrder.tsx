@@ -21,6 +21,7 @@ const BitstampBookOrder = ({ coinName, coinSymbol }: BitstampBookOrderProps) => 
     queryKey: ['BookstampBookOrder', coinSymbol],
     queryFn: () => fetchBookstampBookOrder(coinSymbol),
     enabled: !!coinSymbol, // only if coinSymbol is provided
+    refetchInterval: 1000,
   });
 
   // console.log('currencies in component:', currencies);
@@ -46,8 +47,8 @@ const BitstampBookOrder = ({ coinName, coinSymbol }: BitstampBookOrderProps) => 
 
   const time = format(date, 'HH:mm:ss');
   return (
-    <Box className="mb-20 py-20 ps-9">
-      <H2>Order Book for {coinName}</H2>
+    <Box className="py-4 ps-9">
+      <H2>{coinName}</H2>
       <H3>updated at {time}</H3>
       <H3>Buy Orders</H3>
       {orderBook.bids.slice(0, 4).map((pair: any, index: number) => (

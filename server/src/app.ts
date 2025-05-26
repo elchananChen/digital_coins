@@ -9,6 +9,7 @@ import bitstampRoute from "./routs/bitstampRoute";
 import coinbaseRoute from "./routs/coinbaseRoute";
 
 import mongoose from "mongoose";
+import { updateBinance } from "./services/orderBookService";
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,7 +23,7 @@ if (process.env.DB_URI) {
 } else {
   console.error("DB_URI environment variable is not defined");
 }
-
+updateBinance();
 // middlewares
 app.use(express.json());
 app.use(morgan("tiny"));

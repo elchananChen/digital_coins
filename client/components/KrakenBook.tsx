@@ -22,6 +22,7 @@ const KrakenBookOrder = ({ coinName, pairSymbol }: KrakenBookOrderProps) => {
     queryKey: ['KrakenBookOrder', pairSymbol],
     queryFn: () => fetchKrakenBookOrder(pairSymbol),
     enabled: !!pairSymbol,
+    refetchInterval: 1000, // refetch every second
   });
 
   if (isLoading) return <Spinner className="fill-black pt-96" />;

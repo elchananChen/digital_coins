@@ -20,6 +20,7 @@ const CoinBaseBookOrder = ({ coinName, productId }: CoinBaseBookOrderProps) => {
     queryKey: ['CoinBaseBookOrder', productId],
     queryFn: () => fetchCoinBaseBookOrder(productId),
     enabled: !!productId, // only if coinSymbol is provided
+    refetchInterval: 1000, // refetch every second
   });
 
   // console.log('currencies in component:', currencies);
