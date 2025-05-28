@@ -21,7 +21,7 @@ const BitstampBookOrder = ({ coinName, coinSymbol }: BitstampBookOrderProps) => 
     queryKey: ['BookstampBookOrder', coinSymbol],
     queryFn: () => fetchBookstampBookOrder(coinSymbol),
     enabled: !!coinSymbol, // only if coinSymbol is provided
-    refetchInterval: 1000,
+    refetchInterval: 1000, // refetch every second
   });
 
   // console.log('currencies in component:', currencies);

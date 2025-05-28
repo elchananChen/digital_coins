@@ -41,6 +41,16 @@ const Platforms: React.FC<Props> = ({ navigation }) => {
           }}
         />
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('binance')} className="mb-4">
+        <Text className="mb-1">binance</Text>
+        <Image
+          size="xs"
+          alt="binance logo"
+          source={{
+            uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Binance_Logo.svg/254px-Binance_Logo.svg.png?20210315012944',
+          }}
+        />
+      </TouchableOpacity>
     </Box>
   );
 };

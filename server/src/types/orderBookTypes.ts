@@ -5,6 +5,13 @@ export enum EBitstampSymbol {
   XRP_USD = "XRP-USD", // Ripple (XRP)
   BCH_USD = "BCH-USD", // Bitcoin Cash
 }
+export enum EKrakenSymbol {
+  BTC_USD = "btcusd", // Bitcoin
+  ETH_USD = "ethusd", // Ethereum
+  LTC_USD = "ltcusd", // Litecoin
+  XRP_USD = "xrpusd", // Ripple (XRP)
+  BCH_USD = "bchusd", // Bitcoin Cash
+}
 
 export enum EBinanceSymbol {
   BTC_USD = "BTCUSDT", // Bitcoin
@@ -30,15 +37,34 @@ export enum EUsdtSymbol {
   BCH_USD = "BCHUSDT", // Bitcoin Cash
 }
 
-type PriceAmount = {
+export type TPriceAmount = {
   price: number;
   amount: number;
+  timestamp?: Date;
 };
 
-export type TBookingSchema = {
-  exchange: "coinbase" | "bitstamp" | "kraken";
+export type TOrderBookSchema = {
+  exchange: "coinbase" | "bitstamp" | "kraken" | "binance";
   symbol: EUsdSymbol | EUsdtSymbol;
   timestamp: Date;
-  bids: PriceAmount[];
-  asks: PriceAmount[];
+  bids: TPriceAmount[];
+  asks: TPriceAmount[];
+};
+
+export type TBinanceOrderBookResults = {
+  // lastUpdateId: number;
+  bids: [string, string][];
+  asks: [string, string][];
+};
+
+type KrakenOrder = [string, string, number];
+
+export type TKrakenOrderBookResults = {
+  error: string[];
+  result: {
+    [pair: string]: {
+      asks: KrakenOrder[];
+      bids: KrakenOrder[];
+    };
+  };
 };

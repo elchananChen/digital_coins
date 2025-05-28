@@ -6,7 +6,6 @@ import { Spinner } from '@/components/ui/spinner';
 import { ScrollView } from 'react-native-gesture-handler';
 import { H2, H3 } from '@expo/html-elements';
 import { Box } from '@/components/ui/box';
-import { format } from 'date-fns';
 
 type KrakenBookOrderProps = {
   pairSymbol: string;

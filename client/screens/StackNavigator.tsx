@@ -6,6 +6,8 @@ import React from 'react';
 
 // 📌 Regular Imports (SettingsScreen Now Loads Instantly)
 import LiveCoin from './LiveCoin';
+
+import Binance from './Binance';
 import Bitstamp from './Bitstamp';
 import CoinBase from './CoinBase';
 import Platforms from './Platforms';
@@ -28,6 +30,7 @@ const StackNavigator = () => {
         <Stack.Screen name="coinbase" component={CoinBase} />
         <Stack.Screen name="bitstamp" component={Bitstamp} />
         <Stack.Screen name="kraken" component={Kraken} />
+        <Stack.Screen name="binance" component={Binance} />
 
         {/* <Stack.Screen name="liveCoin" component={LiveCoin} /> */}
       </Stack.Navigator>
