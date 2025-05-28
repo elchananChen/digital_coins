@@ -1,4 +1,4 @@
-import { BinanceOrderBookTypeGuard } from "../../src/utils/typeGuards/bookOrderTypeGuards";
+import { binanceOrderBookTypeGuard } from "../../src/utils/typeGuards/bookOrderTypeGuards";
 import { TBinanceOrderBookResults } from "../../src/types/orderBookTypes"; // עדכן לפי המיקום האמיתי
 
 describe("bookOrderTypeGuard", () => {
@@ -8,7 +8,7 @@ describe("bookOrderTypeGuard", () => {
       asks: [["109321.00000000", "1.00000000"]],
     };
 
-    expect(BinanceOrderBookTypeGuard(data)).toBe(true);
+    expect(binanceOrderBookTypeGuard(data)).toBe(true);
   });
 
   it("should return false if bids is missing", () => {
@@ -16,7 +16,7 @@ describe("bookOrderTypeGuard", () => {
       asks: [["109321.00000000", "1.00000000"]],
     };
 
-    expect(BinanceOrderBookTypeGuard(data)).toBe(false);
+    expect(binanceOrderBookTypeGuard(data)).toBe(false);
   });
 
   it("should return false if bids is not an array", () => {
@@ -25,7 +25,7 @@ describe("bookOrderTypeGuard", () => {
       asks: [["109321.00000000", "1.00000000"]],
     };
 
-    expect(BinanceOrderBookTypeGuard(data)).toBe(false);
+    expect(binanceOrderBookTypeGuard(data)).toBe(false);
   });
 
   it("should return false if an entry in bids is not a tuple", () => {
@@ -34,7 +34,7 @@ describe("bookOrderTypeGuard", () => {
       asks: [["109321.00000000", "1.00000000"]],
     };
 
-    expect(BinanceOrderBookTypeGuard(data)).toBe(false);
+    expect(binanceOrderBookTypeGuard(data)).toBe(false);
   });
 
   it("should return false if bid values are not strings", () => {
@@ -43,11 +43,11 @@ describe("bookOrderTypeGuard", () => {
       asks: [["109321.00000000", "1.00000000"]],
     };
 
-    expect(BinanceOrderBookTypeGuard(data)).toBe(false);
+    expect(binanceOrderBookTypeGuard(data)).toBe(false);
   });
 
   it("should return false if top-level object is null", () => {
-    expect(BinanceOrderBookTypeGuard(null)).toBe(false);
+    expect(binanceOrderBookTypeGuard(null)).toBe(false);
   });
 
   it("should return false if object has extra unexpected structure", () => {
@@ -57,6 +57,6 @@ describe("bookOrderTypeGuard", () => {
       extra: true, // תקף, אבל לא מזיק — הגארד עדיין יאשר
     };
 
-    expect(BinanceOrderBookTypeGuard(data)).toBe(true);
+    expect(binanceOrderBookTypeGuard(data)).toBe(true);
   });
 });

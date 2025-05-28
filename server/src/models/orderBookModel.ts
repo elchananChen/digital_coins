@@ -40,7 +40,14 @@ const symbolField: SchemaTypeOptions<EUsdSymbol | EUsdtSymbol> = {
 const orderBookSchema = new Schema<TOrderBookSchema>({
   exchange: {
     type: String,
-    enum: ["coinbase", "bitstamp", "binance", "kraken"],
+    enum: [
+      "coinbase",
+      "bitstamp",
+      "binance",
+      "kraken",
+      "cryptoDotCom",
+      "byBit",
+    ],
     required: true,
   },
   symbol: symbolField,

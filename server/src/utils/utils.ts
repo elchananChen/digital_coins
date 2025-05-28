@@ -1,5 +1,10 @@
 import os from "os";
-import { EKrakenSymbol, EUsdSymbol } from "../types/orderBookTypes";
+import {
+  ECoinbaseBitstampSymbol,
+  ECryptoDotComSymbol,
+  EKrakenSymbol,
+  EUsdSymbol,
+} from "../types/orderBookTypes";
 export function getLocalIP(): string | null {
   const interfaces = os.networkInterfaces();
   for (const name in interfaces) {
@@ -15,6 +20,40 @@ export function getLocalIP(): string | null {
 export function KrakenSymbolsToUsdSymbols(symbol: EKrakenSymbol): EUsdSymbol {
   const key = Object.keys(EKrakenSymbol).find(
     (k) => EKrakenSymbol[k as keyof typeof EKrakenSymbol] === symbol
+  );
+
+  if (!key || !(key in EUsdSymbol)) {
+    throw new Error(
+      `No matching USD symbol found for Kraken symbol: ${symbol}`
+    );
+  }
+
+  return EUsdSymbol[key as keyof typeof EUsdSymbol];
+}
+
+export function CoinbaseSymbolsToUsdSymbols(
+  symbol: ECoinbaseBitstampSymbol
+): EUsdSymbol {
+  const key = Object.keys(ECoinbaseBitstampSymbol).find(
+    (k) =>
+      ECoinbaseBitstampSymbol[k as keyof typeof ECoinbaseBitstampSymbol] ===
+      symbol
+  );
+
+  if (!key || !(key in EUsdSymbol)) {
+    throw new Error(
+      `No matching USD symbol found for Kraken symbol: ${symbol}`
+    );
+  }
+
+  return EUsdSymbol[key as keyof typeof EUsdSymbol];
+}
+
+export function CryptoDotComSymbolsToUsdSymbols(
+  symbol: ECryptoDotComSymbol
+): EUsdSymbol {
+  const key = Object.keys(ECryptoDotComSymbol).find(
+    (k) => ECryptoDotComSymbol[k as keyof typeof ECryptoDotComSymbol] === symbol
   );
 
   if (!key || !(key in EUsdSymbol)) {

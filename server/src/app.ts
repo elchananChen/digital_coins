@@ -11,7 +11,13 @@ import coinbaseRoute from "./routs/coinbaseRoute";
 import binanceRoute from "./routs/binanceRoute";
 
 import mongoose from "mongoose";
-import { insertBinance, insertKraken } from "./services/orderBookService";
+import {
+  insertBinance,
+  insertByBit,
+  insertCoinbase,
+  insertCryptoDotCom,
+  insertKraken,
+} from "./services/orderBookService";
 
 dotenv.config();
 const app = express();
@@ -23,22 +29,36 @@ if (process.env.DB_URI) {
     .connect(process.env.DB_URI)
     .then(() => {
       console.log("Successfully Connected to DB");
-
       // Runs every 1 second, only if the previous run has finished
-      let isRunning = false;
-      cron.schedule("* * * * * *", async () => {
-        if (isRunning) return;
-        isRunning = true;
-        try {
-          await insertBinance();
-          await insertKraken();
-        } catch (e) {
-          console.error("Error in cron job", e);
-        } finally {
-          isRunning = false;
-        }
+      // platforms are not depend on each other
+      const platforms = [
+        { name: "binance", fn: insertBinance },
+        { name: "kraken", fn: insertKraken },
+        { name: "coinbase", fn: insertCoinbase },
+        { name: "cryptoDotCom", fn: insertCryptoDotCom },
+        { name: "byBit", fn: insertByBit },
+      ];
+      // flags
+      const runningMap: Record<string, boolean> = {};
+
+      platforms.forEach(({ name }) => {
+        runningMap[name] = false;
       });
-      // updateKraken();
+
+      cron.schedule("* * * * * *", () => {
+        platforms.forEach(async ({ name, fn }) => {
+          if (runningMap[name]) return;
+
+          runningMap[name] = true;
+          try {
+            await fn();
+          } catch (e) {
+            console.error(`Error in ${name} job:`, e);
+          } finally {
+            runningMap[name] = false;
+          }
+        });
+      });
     })
     .catch((err) => console.error("Connection to DB failed", err));
 } else {
