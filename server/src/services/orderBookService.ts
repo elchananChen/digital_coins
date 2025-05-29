@@ -1,5 +1,7 @@
 import axios from "axios";
+
 import OrderBook from "../models/orderBookModel";
+
 import {
   binanceOrderBookTypeGuard,
   byBitOrderBookTypeGuard,
@@ -7,6 +9,7 @@ import {
   cryptoDotComTypeGuard,
   krakenOrderBookTypeGuard,
 } from "../utils/typeGuards/bookOrderTypeGuards";
+
 import {
   ECoinbaseBitstampSymbol,
   ECryptoDotComSymbol,
@@ -14,12 +17,14 @@ import {
   EUsdtSymbol,
   TOrderBookSchema,
 } from "../types/orderBookTypes";
+
+import { EExchangeEnum } from "../types/exchangeTypes";
+
 import {
   CoinbaseSymbolsToUsdSymbols,
   CryptoDotComSymbolsToUsdSymbols,
   KrakenSymbolsToUsdSymbols,
 } from "../utils/utils";
-import { log } from "console";
 
 //  extract the EUsdtSymbols to an array
 const binanceSymbols: EUsdtSymbol[] = Object.values(EUsdtSymbol);
@@ -40,7 +45,7 @@ export async function insertBinance() {
         })
       )
     );
- 
+
     const timestamp = new Date();
     const validOrderBook: TOrderBookSchema[] = [];
 
@@ -54,7 +59,7 @@ export async function insertBinance() {
         const data = result.value.data;
 
         validOrderBook.push({
-          exchange: "binance",
+          exchange: EExchangeEnum.BINANCE,
           symbol,
           timestamp,
           bids: data.bids.map(([p, a]) => ({
@@ -80,9 +85,9 @@ export async function insertBinance() {
 
     if (validOrderBook.length > 0) {
       await OrderBook.insertMany(validOrderBook, { ordered: false });
-      console.log(
-        `🗂️ Insert ${validOrderBook.length} binance order books into DB.`
-      );
+      // console.log(
+      //   `🗂️ Insert ${validOrderBook.length} binance order books into DB.`
+      // );
     }
   } catch (error) {
     console.error("Unexpected error:", error);
@@ -119,7 +124,7 @@ export async function insertKraken() {
         const [_, orderData] = Object.entries(data.result)[0];
 
         validOrderBook.push({
-          exchange: "kraken",
+          exchange: EExchangeEnum.KRAKEN,
           symbol,
           timestamp,
           bids: orderData.bids.map(([p, a]) => ({
@@ -147,9 +152,9 @@ export async function insertKraken() {
     // * if there are any good data update db
     if (validOrderBook.length > 0) {
       await OrderBook.insertMany(validOrderBook, { ordered: false });
-      console.log(
-        `🗂️ Insert ${validOrderBook.length} Kraken order books into DB.`
-      );
+      // console.log(
+      //   `🗂️ Insert ${validOrderBook.length} Kraken order books into DB.`
+      // );
     }
   } catch (error) {
     console.error("Unexpected error:", error);
@@ -192,7 +197,7 @@ export async function insertCoinbase() {
         }
 
         validOrderBook.push({
-          exchange: "coinbase",
+          exchange: EExchangeEnum.COINBASE,
           symbol,
           timestamp: timestamp,
           bids: data.bids.slice(0, 10).map(([p, a]) => ({
@@ -220,9 +225,9 @@ export async function insertCoinbase() {
     // * if there are any good data - insert to the db
     if (validOrderBook.length > 0) {
       await OrderBook.insertMany(validOrderBook, { ordered: false });
-      console.log(
-        `🗂️ Insert ${validOrderBook.length} coinbase order books into DB.`
-      );
+      // console.log(
+      //   `🗂️ Insert ${validOrderBook.length} coinbase order books into DB.`
+      // );
     }
   } catch (error) {
     console.error("Unexpected error:", error);
@@ -267,7 +272,7 @@ export async function insertCryptoDotCom() {
 
         // if the data valid - push to an array that will add to DB
         validOrderBook.push({
-          exchange: "cryptoDotCom",
+          exchange: EExchangeEnum.CRYPTO_DOT_COM,
           symbol,
           timestamp: timestamp,
           bids: data.bids.slice(0, 10).map(([p, a]) => ({
@@ -296,9 +301,9 @@ export async function insertCryptoDotCom() {
     // * if there are any good data - insert to the DB
     if (validOrderBook.length > 0) {
       await OrderBook.insertMany(validOrderBook, { ordered: false });
-      console.log(
-        `🗂️ Insert ${validOrderBook.length} crypto.com order books into DB.`
-      );
+      // console.log(
+      //   `🗂️ Insert ${validOrderBook.length} crypto.com order books into DB.`
+      // );
     }
   } catch (error) {
     console.error("Unexpected error:", error);
@@ -342,7 +347,7 @@ export async function insertByBit() {
 
         // if the data valid - push to an array that will add to DB
         validOrderBook.push({
-          exchange: "byBit",
+          exchange: EExchangeEnum.BYBIT,
           symbol,
           timestamp: timestamp,
           bids: data.b.map(([p, a]) => ({
@@ -371,9 +376,9 @@ export async function insertByBit() {
     // * if there are any good data - insert to the DB
     if (validOrderBook.length > 0) {
       await OrderBook.insertMany(validOrderBook, { ordered: false });
-      console.log(
-        `🗂️ Insert ${validOrderBook.length} byBit order books into DB.`
-      );
+      // console.log(
+      //   `🗂️ Insert ${validOrderBook.length} byBit order books into DB.`
+      // );
     }
   } catch (error) {
     console.error("Unexpected error:", error);

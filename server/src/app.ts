@@ -9,6 +9,7 @@ import liveCoinRoute from "./routs/liveCoinRoute";
 import bitstampRoute from "./routs/bitstampRoute";
 import coinbaseRoute from "./routs/coinbaseRoute";
 import binanceRoute from "./routs/binanceRoute";
+import orderbookRoute from "./routs/orderBookRoute";
 
 import mongoose from "mongoose";
 import {
@@ -74,6 +75,7 @@ app.use("/api/live_coin", liveCoinRoute);
 app.use("/api/bitstamp", bitstampRoute);
 app.use("/api/coinbase", coinbaseRoute);
 app.use("/api/binance", binanceRoute);
+app.use("/api/order_book", orderbookRoute);
 
 app.listen(PORT, () => {
   if (localIP) {

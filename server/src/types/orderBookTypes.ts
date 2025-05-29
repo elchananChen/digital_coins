@@ -1,3 +1,5 @@
+import { ExchangeType } from "./exchangeTypes";
+
 // ! symbols format for our DB (EUsdSymbol ,EUsdtSymbol)
 export enum EUsdSymbol {
   BTC_USD = "BTCUSD", // Bitcoin
@@ -54,13 +56,7 @@ export type TPriceAmount = {
 };
 
 export type TOrderBookSchema = {
-  exchange:
-    | "coinbase"
-    | "bitstamp"
-    | "kraken"
-    | "binance"
-    | "cryptoDotCom"
-    | "byBit";
+  exchange: ExchangeType;
   symbol: EUsdSymbol | EUsdtSymbol;
   timestamp: Date;
   bids: TPriceAmount[];

@@ -5,6 +5,7 @@ import {
   TOrderBookSchema,
   TPriceAmount,
 } from "../types/orderBookTypes";
+import { EExchangeEnum } from "../types/exchangeTypes";
 
 const PriceAmountSchema = new Schema<TPriceAmount>(
   {
@@ -40,14 +41,7 @@ const symbolField: SchemaTypeOptions<EUsdSymbol | EUsdtSymbol> = {
 const orderBookSchema = new Schema<TOrderBookSchema>({
   exchange: {
     type: String,
-    enum: [
-      "coinbase",
-      "bitstamp",
-      "binance",
-      "kraken",
-      "cryptoDotCom",
-      "byBit",
-    ],
+    enum: Object.values(EExchangeEnum),
     required: true,
   },
   symbol: symbolField,
