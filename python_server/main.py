@@ -48,7 +48,7 @@ binance_symbols = {
     "BCHUSDT":"BCH_USDT", 
 }
 
-
+# monitor
 def monitor_resource_usage(interval=2):
     process = psutil.Process(os.getpid())
     while True:
@@ -62,6 +62,7 @@ def start_monitoring():
     t.start()
 
 
+# binance 
 async def get_binance_coin_order_book(binance_symbol,db_symbol, browser):
     page = await browser.new_page()
     await page.goto(f"https://www.binance.com/en/trade/{binance_symbol}?_from=markets&type=spot", wait_until="domcontentloaded")
@@ -74,7 +75,7 @@ async def get_binance_coin_order_book(binance_symbol,db_symbol, browser):
     # run every second and update data without navigation
     while True:
             try:
-                data = await fetch_data(page, db_symbol)
+                data = await fetch_binance_data(page, db_symbol)
                 if data:
                     price_doc = OrderBook(**data)
                     await price_doc.insert()
@@ -84,7 +85,7 @@ async def get_binance_coin_order_book(binance_symbol,db_symbol, browser):
                 traceback.print_exc()
             await asyncio.sleep(1) 
 
-
+#  wait for elements to start the app without errors
 async def wait_for_elements(locator, count, timeout=10000, poll_interval=200):
     # Wait until locator finds at least `count` elements
     elapsed = 0
@@ -99,9 +100,8 @@ async def wait_for_elements(locator, count, timeout=10000, poll_interval=200):
     # Raise error if not enough elements found in time
     raise TimeoutError(f"Expected at least {count} elements, but found {elements_found} after {timeout}ms.")
 
-
-async def fetch_data(page,db_symbol):
-        # get all the bids data:
+#  
+async def fetch_binance_data(page,db_symbol):
         try:
             rows_asks = page.locator("//div[@class='orderbook-list orderbook-bid has-overlay']//div[contains(@class, 'row-content')]")
             rows_bids = page.locator("//div[@class='orderbook-list orderbook-ask has-overlay']//div[contains(@class, 'row-content')]")
@@ -137,7 +137,7 @@ async def fetch_data(page,db_symbol):
 
 
 async def main():
-     start_monitoring()
+    #  start_monitoring()
      client = AsyncIOMotorClient(DB_URI)
      await init_beanie(database=client[DB_NAME], document_models=[OrderBook])
      
