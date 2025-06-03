@@ -4,6 +4,7 @@ import OrderBook from "../models/orderBookModel";
 
 import {
   binanceOrderBookTypeGuard,
+  bitStampTypeGuard,
   byBitOrderBookTypeGuard,
   coinbaseOrderBookTypeGuard,
   cryptoDotComTypeGuard,
@@ -11,7 +12,7 @@ import {
 } from "../utils/typeGuards/bookOrderTypeGuards";
 
 import {
-  ECoinbaseBitstampSymbol,
+  ECoinbaseSymbol,
   ECryptoDotComSymbol,
   EKrakenSymbol,
   EUsdtSymbol,
@@ -28,10 +29,9 @@ import {
 
 //  extract the EUsdtSymbols to an array
 const binanceSymbols: EUsdtSymbol[] = Object.values(EUsdtSymbol);
-const krakenCoinbaseSymbols: EKrakenSymbol[] = Object.values(EKrakenSymbol);
-const coinbaseSymbols: ECoinbaseBitstampSymbol[] = Object.values(
-  ECoinbaseBitstampSymbol
-);
+// work for bitStamp too
+const krakenSymbols: EKrakenSymbol[] = Object.values(EKrakenSymbol);
+const coinbaseSymbols: ECoinbaseSymbol[] = Object.values(ECoinbaseSymbol);
 const cryptoDotComSymbols: ECryptoDotComSymbol[] =
   Object.values(ECryptoDotComSymbol);
 
@@ -98,7 +98,7 @@ export async function insertBinance() {
 export async function insertKraken() {
   try {
     const results = await Promise.allSettled(
-      krakenCoinbaseSymbols.map((symbol) =>
+      krakenSymbols.map((symbol) =>
         axios.get(`https://api.kraken.com/0/public/Depth`, {
           params: { pair: symbol, count: 10 },
         })
@@ -109,7 +109,7 @@ export async function insertKraken() {
     const validOrderBook: TOrderBookSchema[] = [];
 
     results.forEach((result, index) => {
-      const krakenSymbol = krakenCoinbaseSymbols[index];
+      const krakenSymbol = krakenSymbols[index];
       const symbol = KrakenSymbolsToUsdSymbols(krakenSymbol);
 
       // * if type TKrakenOrderBookResults
@@ -378,6 +378,79 @@ export async function insertByBit() {
       await OrderBook.insertMany(validOrderBook, { ordered: false });
       // console.log(
       //   `🗂️ Insert ${validOrderBook.length} byBit order books into DB.`
+      // );
+    }
+  } catch (error) {
+    console.error("Unexpected error:", error);
+  }
+}
+
+// ! bitStamp
+export async function insertBitStamp() {
+  try {
+    const results = await Promise.allSettled(
+      // kraken and bitStamp symbols are the same
+      krakenSymbols.map((symbol) =>
+        axios.get(`https://www.bitstamp.net/api/v2/order_book/${symbol}`)
+      )
+    );
+
+    const validOrderBook: TOrderBookSchema[] = [];
+    let timestamp = new Date();
+
+    results.forEach((result, index) => {
+      const bitStampSymbol = krakenSymbols[index];
+      const symbol = KrakenSymbolsToUsdSymbols(bitStampSymbol);
+
+      // * if type TByBitOrderBookResults
+      if (
+        result.status === "fulfilled" &&
+        bitStampTypeGuard(result.value.data)
+      ) {
+        const data = result.value.data;
+
+        // If 'timestamp' exists, set 'timestamp' to its value
+        const nowSeconds = Math.floor(Date.now() / 1000);
+        if (
+          typeof data.timestamp === "string" &&
+          data.timestamp.length > 0 &&
+          Number(data.timestamp) < nowSeconds + 60
+        ) {
+          timestamp = new Date(Number(data.timestamp) * 1000);
+        }
+        // if the data valid - push to an array that will add to DB
+        validOrderBook.push({
+          exchange: EExchangeEnum.BITSTAMP,
+          symbol,
+          timestamp: timestamp,
+          bids: data.bids.slice(0, 10).map(([p, a]) => ({
+            price: parseFloat(p),
+            amount: parseFloat(a),
+          })),
+          asks: data.asks.slice(0, 10).map(([p, a]) => ({
+            price: parseFloat(p),
+            amount: parseFloat(a),
+          })),
+        });
+
+        // * if data not match  TByBitOrderBookResults
+      } else if (result.status === "fulfilled") {
+        console.log(`partial ${symbol} data:`, result.value.data);
+        // * if error
+      } else {
+        console.warn(
+          `❌ Failed to fetch byBit order book ${symbol}:`,
+          result.reason.code,
+          result.reason.status
+        );
+      }
+    });
+
+    // * if there are any good data - insert to the DB
+    if (validOrderBook.length > 0) {
+      await OrderBook.insertMany(validOrderBook, { ordered: false });
+      // console.log(
+      //   `🗂️ Insert ${validOrderBook.length} bitStamp order books into DB.`
       // );
     }
   } catch (error) {

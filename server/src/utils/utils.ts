@@ -1,6 +1,6 @@
 import os from "os";
 import {
-  ECoinbaseBitstampSymbol,
+  ECoinbaseSymbol,
   ECryptoDotComSymbol,
   EKrakenSymbol,
   EUsdSymbol,
@@ -32,12 +32,10 @@ export function KrakenSymbolsToUsdSymbols(symbol: EKrakenSymbol): EUsdSymbol {
 }
 
 export function CoinbaseSymbolsToUsdSymbols(
-  symbol: ECoinbaseBitstampSymbol
+  symbol: ECoinbaseSymbol
 ): EUsdSymbol {
-  const key = Object.keys(ECoinbaseBitstampSymbol).find(
-    (k) =>
-      ECoinbaseBitstampSymbol[k as keyof typeof ECoinbaseBitstampSymbol] ===
-      symbol
+  const key = Object.keys(ECoinbaseSymbol).find(
+    (k) => ECoinbaseSymbol[k as keyof typeof ECoinbaseSymbol] === symbol
   );
 
   if (!key || !(key in EUsdSymbol)) {

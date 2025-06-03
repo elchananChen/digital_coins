@@ -1,33 +1,30 @@
-import { Text } from 'react-native';
+import { FlatList, StyleSheet, Text } from 'react-native';
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchBookstampBookOrder } from '@/api/bitstampApi';
 import { Spinner } from '@/components/ui/spinner';
-import { ScrollView } from 'react-native-gesture-handler';
-import { H1, H2, H3 } from '@expo/html-elements';
+import { H2, H3 } from '@expo/html-elements';
 import { Box } from '@/components/ui/box';
 import { format } from 'date-fns';
-import { TOrderBookRes, TPriceAmount, TUsdSymbol, TUsdtSymbol } from '@/types/OrderBookTypes';
+import { TUsdSymbol, TUsdtSymbol } from '@/types/OrderBookTypes';
+import { TExchange } from '@/shared/constants/exchanges';
+import { fetchOrderBook } from '@/api/orderBookApi';
 
 type OrderBookProps = {
   symbol: TUsdtSymbol | TUsdSymbol;
-  coinName: string;
   queryKey: string;
-  fetchOrderBook: (symbol: TUsdtSymbol | TUsdSymbol) => Promise<undefined | TOrderBookRes>;
+  exchange: TExchange;
 };
-const OrderBook = ({ coinName, symbol, fetchOrderBook, queryKey }: OrderBookProps) => {
+const OrderBook = ({ symbol, queryKey, exchange }: OrderBookProps) => {
   const {
     data: orderBook,
     isLoading,
     error,
   } = useQuery({
     queryKey: [queryKey, symbol],
-    queryFn: () => fetchOrderBook(symbol),
+    queryFn: () => fetchOrderBook(exchange.currency, symbol, exchange.name),
     enabled: !!symbol, // only if coinSymbol is provided
-    refetchInterval: 5000, // refetch every second
+    refetchInterval: 1000, // refetch every second
   });
-
-  // console.log('orderBook', orderBook?.bids);
 
   if (isLoading) return <Spinner className="fill-black pt-96" />;
 
@@ -50,25 +47,44 @@ const OrderBook = ({ coinName, symbol, fetchOrderBook, queryKey }: OrderBookProp
   const date = orderBook.timestamp;
   const time = format(date, 'HH:mm:ss');
   return (
-    <Box className="py-4 ps-9">
-      <H2>{coinName}</H2>
-      <H3>updated at {time}</H3>
+    <Box className="w-40">
+      <H2>{exchange.displayName}</H2>
+      <Text className="w-1/2">updated at {time}</Text>
       <H3>Buy Orders</H3>
-      {orderBook.bids.slice(0, 4).map((pair: TPriceAmount, index: number) => (
-        <Box className="mt-5" key={index}>
-          <Text className="text-green-600">Price: {pair.price}</Text>
-          <Text className="text-green-600">Amount: {pair.amount}</Text>
-        </Box>
-      ))}
+      <FlatList
+        data={orderBook.bids}
+        renderItem={({ item: bid }) => (
+          <Box className="mt-2">
+            <Text className="text-green-600">Price: {bid.price}</Text>
+            <Text className="text-green-600">Amount: {bid.amount}</Text>
+          </Box>
+        )}
+        keyExtractor={(pair) => pair.price.toString()}
+        scrollEnabled={true}
+        nestedScrollEnabled={true}
+        style={styles.innerList}
+      />
       <H3>Sell Orders</H3>
-      {orderBook.asks.slice(0, 4).map((pair: TPriceAmount, index: number) => (
-        <Box className="mt-5" key={index}>
-          <Text className="text-red-600">Price: {pair.price}</Text>
-          <Text className="text-red-600">Amount: {pair.amount}</Text>
-        </Box>
-      ))}
+      <FlatList
+        data={orderBook.asks}
+        renderItem={({ item: ask }) => (
+          <Box className="mt-2">
+            <Text className="text-red-600">Price: {ask.price}</Text>
+            <Text className="text-red-600">Amount: {ask.amount}</Text>
+          </Box>
+        )}
+        keyExtractor={(pair) => pair.price.toString()}
+        scrollEnabled={true}
+        nestedScrollEnabled={true}
+        style={styles.innerList}
+      />
     </Box>
   );
 };
 
 export default OrderBook;
+const styles = StyleSheet.create({
+  innerList: {
+    height: 300,
+  },
+});

@@ -4,7 +4,6 @@ import { mongooseErrors } from "../utils/errors";
 import { EExchangeEnum } from "../types/exchangeTypes";
 
 export async function getOrderBook(req: Request, res: Response) {
-  console.log("baba");
   try {
     const { exchange, symbol } = req.query;
 

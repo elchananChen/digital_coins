@@ -1,6 +1,6 @@
 export enum EExchangeEnum {
   COINBASE = "coinbase",
-  //   BITSTAMP = "bitStamp",
+  BITSTAMP = "bitStamp",
   BINANCE = "binance",
   KRAKEN = "kraken",
   CRYPTO_DOT_COM = "cryptoDotCom",

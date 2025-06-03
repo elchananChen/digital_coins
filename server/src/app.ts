@@ -14,6 +14,7 @@ import orderbookRoute from "./routs/orderBookRoute";
 import mongoose from "mongoose";
 import {
   insertBinance,
+  insertBitStamp,
   insertByBit,
   insertCoinbase,
   insertCryptoDotCom,
@@ -38,6 +39,7 @@ if (process.env.DB_URI) {
         { name: "coinbase", fn: insertCoinbase },
         { name: "cryptoDotCom", fn: insertCryptoDotCom },
         { name: "byBit", fn: insertByBit },
+        { name: "bitStamp", fn: insertBitStamp },
       ];
       // flags
       const runningMap: Record<string, boolean> = {};

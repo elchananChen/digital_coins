@@ -1,5 +1,7 @@
 import {
+  TBinanceByBitOrder,
   TBinanceOrderBookResults,
+  TBitStampResults,
   TByBitOrderBookResults,
   TCoinbaseOrderBookResults,
   TCryptoDotComOrder,
@@ -68,6 +70,18 @@ export const coinbaseOrderBookTypeGuard = (
     krakenCoinbaseOrderCheck(data.asks.slice(0, 10))
     // typeof data.time === "string" &&
     // !isNaN(Date.parse(data.time))
+  );
+};
+
+// coinbase
+export const bitStampTypeGuard = (data: any): data is TBitStampResults => {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    Array.isArray(data.bids) &&
+    Array.isArray(data.asks) &&
+    binanceByBitOrderCheck(data.bids.slice(0, 10)) &&
+    binanceByBitOrderCheck(data.asks.slice(0, 10))
   );
 };
 
@@ -157,7 +171,7 @@ export const CryptoDotComOrderCheck = (
 // for bids and asks with [string, string]
 export const binanceByBitOrderCheck = (
   orders: any
-): orders is TCryptoDotComOrder[] => {
+): orders is TBinanceByBitOrder[] => {
   return (
     Array.isArray(orders) &&
     orders.every(

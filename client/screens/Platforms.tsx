@@ -1,5 +1,3 @@
-import React from 'react';
-
 // types
 import { Props } from '@/types/NavigationTypes';
 
@@ -10,7 +8,7 @@ import { Text, TouchableOpacity } from 'react-native';
 import { Box } from '@/components/ui/box';
 import { Image } from '@/components/ui/image';
 
-const Platforms: React.FC<Props> = ({ navigation }) => {
+const Platforms = ({ navigation }: Props) => {
   return (
     <Box className="mb-20 py-20 ps-9">
       <TouchableOpacity onPress={() => navigation.navigate('coinbase')} className="mb-4">

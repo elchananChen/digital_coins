@@ -1,0 +1,26 @@
+[project]
+name = "python-server"
+version = "0.1.0"
+description = "Crypto scraping server using Playwright + Beanie"
+authors = [
+    { name = "elchanan" }
+]
+readme = "README.md"
+requires-python = ">=3.11,<4.0"
+dependencies = [
+    "playwright>=1.52.0,<2.0.0",
+    "beanie>=1.24.0,<2.0.0",
+    "motor>=3.4.0,<4.0.0",
+    "python-dotenv>=1.1.0,<2.0.0",
+    "psutil (>=7.0.0,<8.0.0)"
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+# אם אתה צריך תזמון הרצה קבוע – נשתמש ב־asyncio או ב־schedule
+schedule = "^1.2.2"
+[tool.poetry]
+package-mode = false

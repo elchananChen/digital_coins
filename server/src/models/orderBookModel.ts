@@ -57,6 +57,6 @@ const orderBookSchema = new Schema<TOrderBookSchema>({
 orderBookSchema.index({ symbol: 1, exchange: 1, timestamp: -1 });
 
 // Automatically delete data older than 10 minutes
-orderBookSchema.index({ timestamp: 1 }, { expireAfterSeconds: 600 });
+// orderBookSchema.index({ timestamp: 1 }, { expireAfterSeconds: 600 });
 
 export default model("OrderBook", orderBookSchema, "OrderBook");

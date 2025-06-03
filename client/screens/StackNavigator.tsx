@@ -9,11 +9,14 @@ import LiveCoin from './LiveCoin';
 
 import Binance from './Binance';
 import Bitstamp from './Bitstamp';
-import CoinBase from './CoinBase';
 import Platforms from './Platforms';
 import Kraken from './Kraken';
+import Coins from './Coins';
+import CoinDetails from '@/components/CoinDetails';
+import { TRootStackParamList } from '@/types/NavigationTypes';
+import { withLayout } from '@/utils/WithLayout';
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<TRootStackParamList>();
 
 // ✅ Main Stack Navigator
 const StackNavigator = () => {
@@ -21,16 +24,17 @@ const StackNavigator = () => {
     <NavigationContainer>
       {/* 🏆 Settings Screens (Instant Load) */}
       <Stack.Navigator
-        initialRouteName="platforms"
+        initialRouteName="coins"
         screenOptions={{
           headerShown: false,
           detachPreviousScreen: true,
         }}>
-        <Stack.Screen name="platforms" component={Platforms} />
-        <Stack.Screen name="coinbase" component={CoinBase} />
-        <Stack.Screen name="bitstamp" component={Bitstamp} />
-        <Stack.Screen name="kraken" component={Kraken} />
-        <Stack.Screen name="binance" component={Binance} />
+        <Stack.Screen name="platforms" component={withLayout(Platforms)} />
+        <Stack.Screen name="coins" component={withLayout(Coins)} />
+        <Stack.Screen name="coinDetails" component={withLayout(CoinDetails)} />
+        <Stack.Screen name="bitstamp" component={withLayout(Bitstamp)} />
+        <Stack.Screen name="kraken" component={withLayout(Kraken)} />
+        <Stack.Screen name="binance" component={withLayout(Binance)} />
 
         {/* <Stack.Screen name="liveCoin" component={LiveCoin} /> */}
       </Stack.Navigator>

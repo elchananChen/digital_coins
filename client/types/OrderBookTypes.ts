@@ -1,9 +1,12 @@
-export type TUsdSymbol =
-  | 'BTCUSD' // Bitcoin
-  | 'ETHUSD' // Ethereum
-  | 'LTCUSD' // Litecoin
-  | 'XRPUSD' // Ripple (XRP)
-  | 'BCHUSD'; // Bitcoin Cash
+import { TExchangeName } from '@/shared/constants/exchanges';
+
+export const usdSymbols = [
+  'BTCUSD', // Bitcoin
+  'ETHUSD', // Ethereum
+  'LTCUSD', // Litecoin
+  'XRPUSD', // Ripple (XRP)
+  'BCHUSD', // Bitcoin Cash
+] as const;
 
 export const usdtSymbols = [
   'BTCUSDT', // Bitcoin
@@ -14,6 +17,7 @@ export const usdtSymbols = [
 ] as const;
 
 export type TUsdtSymbol = (typeof usdtSymbols)[number];
+export type TUsdSymbol = (typeof usdSymbols)[number];
 
 export type TPriceAmount = {
   price: number;
@@ -21,9 +25,11 @@ export type TPriceAmount = {
 };
 
 export type TOrderBookRes = {
-  exchange: 'coinbase' | 'bitstamp' | 'kraken' | 'binance';
+  exchange: TExchangeName;
   symbol: TUsdSymbol | TUsdtSymbol;
   timestamp: Date;
   bids: TPriceAmount[];
   asks: TPriceAmount[];
 };
+
+export type TCurrency = 'usdt' | 'usd';
