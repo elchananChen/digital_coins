@@ -41,26 +41,33 @@ if (process.env.DB_URI) {
         { name: "byBit", fn: insertByBit },
         { name: "bitStamp", fn: insertBitStamp },
       ];
+
       // flags
       const runningMap: Record<string, boolean> = {};
 
-      platforms.forEach(({ name }) => {
+      platforms.forEach(({ name, fn }) => {
         runningMap[name] = false;
-      });
 
-      cron.schedule("* * * * * *", () => {
-        platforms.forEach(async ({ name, fn }) => {
+        setInterval(async () => {
           if (runningMap[name]) return;
 
           runningMap[name] = true;
           try {
+            // initial run time calculation
+            // const start = Date.now();
+            // run the function
             await fn();
-          } catch (e) {
-            console.error(`Error in ${name} job:`, e);
+            // calculate the run time
+            // const duration = Date.now() - start;
+            // if (duration > 500) {
+            //   console.warn(`${name} took too long: ${duration}ms`);
+            // }
+          } catch (err) {
+            console.error(`Error running ${name}:`, err);
           } finally {
             runningMap[name] = false;
           }
-        });
+        }, 500);
       });
     })
     .catch((err) => console.error("Connection to DB failed", err));
