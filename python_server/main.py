@@ -137,7 +137,7 @@ async def fetch_binance_data(page,db_symbol):
 
 
 async def main():
-    #  start_monitoring()
+     start_monitoring()
      client = AsyncIOMotorClient(DB_URI)
      await init_beanie(database=client[DB_NAME], document_models=[OrderBook])
      
@@ -155,3 +155,10 @@ async def main():
             print("🔴 Uncaught exception in tasks:", e)
 
 asyncio.run(main())
+
+
+
+
+
+
+# group relative divide-y divide-transparent w-full [&>*:hover]:bg-order-book-hover [&>*:hover~div]:bg-order-book-hover
