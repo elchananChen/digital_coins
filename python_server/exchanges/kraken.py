@@ -67,7 +67,7 @@ async def get_kraken_coin_order_book(kraken_symbol,db_symbol, browser):
     await wait_for_elements(sk_light_object,1)
 
 
-    ask_light_object =page.locator("css=div.group div")
+    ask_light_object =page.locator("css=span.hover:font-bold")
 
     if await ask_light_object.count() == 0:
         print("ask_light_object not exist")
