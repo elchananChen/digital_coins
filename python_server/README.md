@@ -1,8 +1,26 @@
+└── [X] 📁 python_server (53.97 KB)
+├── [ ] 📄 .env (148 B)
+├── [ ] 📄 .gitignore (15 B)
+├── [ ] 📄 README.md (70 B)
+├── [X] 📄 main.py (5.45 KB)
+├── [ ] 📄 poetry.lock (47.74 KB)
+└── [X] 📄 pyproject.toml (573 B)
+
+# warning
+
 heavy process - need strong cpu !
 
-to run : poetry run python main.py
+# run the project:
+
+poetry run python main.py
+
+# binance url for example
 
 https://www.binance.com/en/trade/BTC_USDT?_from=markets&type=spot
+
+# kraken url for example
+
+https://pro.kraken.com/app/trade/btc-usd
 
 ## Installing Poetry
 
