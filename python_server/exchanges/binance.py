@@ -31,7 +31,6 @@ async def fetch_binance_data(page,db_symbol):
                 row_asks = rows_asks.nth(i)
                 row_bids = rows_bids.nth(i)
 
-
                 ask_price = await row_asks.locator("div").nth(0).inner_text()
                 ask_amount = await row_asks.locator("div").nth(1).inner_text()
 
@@ -64,12 +63,12 @@ async def fetch_binance_data(page,db_symbol):
 async def get_binance_coin_order_book(binance_symbol,db_symbol, browser):
     page = await browser.new_page()
     await page.goto(f"https://www.binance.com/en/trade/{binance_symbol}?_from=markets&type=spot", wait_until="domcontentloaded")
-    
+
     # wait for the first ask to load and wait one more second
     ask_light_object = page.locator("css=div.ask-light")
     await ask_light_object.first.wait_for(timeout=20000)
     await asyncio.sleep(1)
-    
+
     # run every second and update data without navigation
     while True:
             try:

@@ -1,3 +1,5 @@
+# https://www.bybit.com/en/trade/spot/BTC/USDT
+
 # dates
 from datetime import datetime, timezone
 
@@ -11,16 +13,24 @@ from webbrowser import get
 from core.models import OrderBook
 from time import sleep
 
-
+ 
 from utils.scraping_utils import wait_for_elements
-kraken_symbols = {
-    "BTCUSD":"btc-usd", 
-    "ETHUSD":"eth-usd", 
-    "LTCUSD":"ltc-usd", 
-    "XRPUSD":"xrp-usd", 
-    "BCHUSD":"bch-usd", 
+
+
+
+
+# !!  canvas !
+
+
+by_bit_symbols = {
+    "BTCUSDT":"BTC/USDT", 
+    "ETHUSDT":"ETH/USDT", 
+    "LTCUSDT":"LTC/USDT", 
+    "XRPUSDT":"XRP/USDT", 
+    "BCHUSDT":"BCH/USDT", 
 }
 
+ 
 async def fetch_kraken_data(page,db_symbol):    
     #  ! get the order book wrapper 
     wrapper = page.locator("//div[@class='flex-1 flex relative overflow-auto h-full']//div[@class='size-full flex flex-col']//div[@class='flex size-full relative overflow-hidden justify-center flex-col']//div[contains(@class, 'group relative divide-y divide-transparent w-full')]")
@@ -76,13 +86,13 @@ async def fetch_kraken_data(page,db_symbol):
         print(f"❗ Unexpected error: {e}")
 
 
-async def get_kraken_coin_order_book(kraken_symbol,db_symbol, context):
+async def get_by_bit_coin_order_book(by_bit_symbol,db_symbol, context):
     page = await context.new_page()
-    await page.goto(f"https://pro.kraken.com/app/trade/{kraken_symbol}", wait_until="domcontentloaded")
+    await page.goto(f"https://www.bybit.com/en/trade/spot/{by_bit_symbol}", wait_until="domcontentloaded")
     
     # ! wait for the first ask to load and wait one more second
     await asyncio.sleep(5)
-    sk_light_object =page.locator("css=div.group")
+    sk_light_object =page.locator("")
     await wait_for_elements(sk_light_object,1)
     print("get ask_light_object")
     await asyncio.sleep(5)
@@ -94,7 +104,7 @@ async def get_kraken_coin_order_book(kraken_symbol,db_symbol, context):
                 if data:
                     price_doc = OrderBook(**data)
                     await price_doc.insert()
-                    print(f"Inserted kraken {kraken_symbol} at {data['timestamp']}")
+                    print(f"Inserted kraken {bybit_symbol} at {data['timestamp']}")
             except Exception as e:
                 print(f"Error fetching data: {e}")
                 traceback.print_exc()
@@ -103,10 +113,10 @@ async def get_kraken_coin_order_book(kraken_symbol,db_symbol, context):
 
 
 
-async def run_kraken_scraper(context):
+async def run_by_bit_scraper(context):
     tasks = [] 
-    for db_symbol,kraken_symbol in kraken_symbols.items():
-        task = asyncio.create_task(get_kraken_coin_order_book(kraken_symbol, db_symbol, context))
+    for db_symbol,by_bit_symbol in by_bit_symbols.items():
+        task = asyncio.create_task(get_by_bit_coin_order_book(by_bit_symbol, db_symbol, context))
         tasks.append(task)
     try:
         await asyncio.gather(*tasks, return_exceptions=True)

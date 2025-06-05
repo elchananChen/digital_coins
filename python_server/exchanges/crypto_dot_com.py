@@ -14,8 +14,8 @@ crypto_symbols = {
     "BTCUSDT":"BTC_USDT", 
     "ETHUSDT":"ETH_USDT", 
     "LTCUSDT":"LTC_USDT", 
-    "XRPUSDT":"XRP_USDT", 
-    "BCHUSDT":"BCH_USDT", 
+    # "XRPUSDT":"XRP_USDT", 
+    # "BCHUSDT":"BCH_USDT", 
 }
 
 
