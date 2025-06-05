@@ -2,6 +2,7 @@ import asyncio
 from core import init_db, start_monitoring
 from exchanges.binance import run_binance_scraper
 from exchanges.kraken import run_kraken_scraper
+from exchanges.crypto_dot_com import run_crypto_scraper
 from playwright.async_api import async_playwright
 
 async def main():
@@ -9,8 +10,10 @@ async def main():
     # start_monitoring()
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        await run_binance_scraper(browser)
+        browser = await p.chromium.launch(headless=False,args=["--start-maximized"])
+        context = await browser.new_context(no_viewport=True)
+        # await run_binance_scraper(browser)
+        await run_crypto_scraper(context)
         # await run_kraken_scraper(browser)
 
 if __name__ == "__main__":
