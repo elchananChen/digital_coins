@@ -1,26 +1,50 @@
-└── [X] 📁 python_server (53.97 KB)
-├── [ ] 📄 .env (148 B)
-├── [ ] 📄 .gitignore (15 B)
-├── [ ] 📄 README.md (70 B)
-├── [X] 📄 main.py (5.45 KB)
-├── [ ] 📄 poetry.lock (47.74 KB)
-└── [X] 📄 pyproject.toml (573 B)
-
-# warning
+# warning !!
 
 heavy process - need strong cpu !
+
+<!-- structure -->
+
+└── [X] 📁 python_server
+├── [X] 📄 .env
+├── [X] 📄 .gitignore
+├── [X] 📄 README.md
+├── [X] 📁 core
+│ ├── [X] 📄 **init**.py
+│ ├── [X] 📄 db.py
+│ ├── [X] 📄 models.py
+│ └── [X] 📄 monitor.py
+├── [X] 📁 exchanges
+│ ├── [X] 📄 **init**.py
+│ ├── [X] 📄 binance.py
+│ ├── [X] 📄 by_bit.py
+│ └── [X] 📄 kraken.py
+├── [X] 📁 graphs
+│ ├── [X] 📄 monitor_graph.py
+│ └── [X] 📄 monitor_log.csv
+├── [X] 📄 main.py
+├── [X] 📄 poetry.lock
+├── [X] 📄 pyproject.toml
+└── [X] 📁 utils
+├── [X] 📄 **init**.py
+└── [X] 📄 scraping_utils.py
 
 # run the project:
 
 poetry run python main.py
 
-# binance url for example
+# run the monitor graph:
+
+poetry run python graphs/monitor_graph.py
+
+# exchanges urls
+
+# binance, kraken, by bit, crypto.com , bit stamp, coinbase
 
 https://www.binance.com/en/trade/BTC_USDT?_from=markets&type=spot
-
-# kraken url for example
-
 https://pro.kraken.com/app/trade/btc-usd
+https://www.bybit.com/en/trade/spot/BTC/USDT
+
+<!-- installation -->
 
 ## Installing Poetry
 

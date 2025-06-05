@@ -13,8 +13,15 @@ from webbrowser import get
 from core.models import OrderBook
 from time import sleep
 
-
+ 
 from utils.scraping_utils import wait_for_elements
+
+
+
+
+# !!  canvas !
+
+
 by_bit_symbols = {
     "BTCUSDT":"BTC/USDT", 
     "ETHUSDT":"ETH/USDT", 
@@ -23,6 +30,7 @@ by_bit_symbols = {
     "BCHUSDT":"BCH/USDT", 
 }
 
+ 
 async def fetch_kraken_data(page,db_symbol):    
     #  ! get the order book wrapper 
     wrapper = page.locator("//div[@class='flex-1 flex relative overflow-auto h-full']//div[@class='size-full flex flex-col']//div[@class='flex size-full relative overflow-hidden justify-center flex-col']//div[contains(@class, 'group relative divide-y divide-transparent w-full')]")
@@ -84,7 +92,7 @@ async def get_by_bit_coin_order_book(by_bit_symbol,db_symbol, context):
     
     # ! wait for the first ask to load and wait one more second
     await asyncio.sleep(5)
-    sk_light_object =page.locator("css=div.group")
+    sk_light_object =page.locator("")
     await wait_for_elements(sk_light_object,1)
     print("get ask_light_object")
     await asyncio.sleep(5)

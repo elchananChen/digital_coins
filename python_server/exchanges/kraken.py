@@ -100,8 +100,8 @@ async def get_kraken_coin_order_book(kraken_symbol,db_symbol, context):
                 traceback.print_exc()
             await asyncio.sleep(1) 
 
-   
-    
+
+
 
 async def run_kraken_scraper(context):
     tasks = [] 
