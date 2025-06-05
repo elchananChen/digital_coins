@@ -35,8 +35,9 @@ async def main():
                 headless_browser = await p.chromium.launch(headless=True)              
                 exchange_context =  await headless_browser.new_context()    
             else:
-                browser = await p.chromium.launch(headless=False,args=["--start-maximized"])
+                browser = await p.chromium.launch(headless=False, args=["--start-maximized"])
                 exchange_context = await browser.new_context(no_viewport=True)
+                
             task = asyncio.create_task(exchange["fn"](exchange_context))
             tasks.append(task)    
         try:
