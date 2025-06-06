@@ -2,8 +2,11 @@ import asyncio
 from core import init_db, start_monitoring_v1, start_monitoring_v2 ,start_monitoring_v3 
 from exchanges.binance import run_binance_scraper
 from exchanges.kraken import run_kraken_scraper
-from exchanges.crypto_dot_com import run_crypto_scraper
+from exchanges.by_bit import run_by_bit_scraper
 from playwright.async_api import async_playwright
+
+
+
 exchanges = [
     # {
     #     "name": "binance",
@@ -16,17 +19,19 @@ exchanges = [
     #     "headless": False,
     # },
     {
-        "name": "crypto.com",
-        "fn": run_crypto_scraper,
-        "headless": True,
+        "name": "byBit",
+        "fn": run_by_bit_scraper,
+        "headless": False,
     },
 ]
+
+
 
 async def main():
     await init_db()
     # start_monitoring_v1()
     # start_monitoring_v2()
-    start_monitoring_v3()
+    # start_monitoring_v3()
 
     async with async_playwright() as p:
         tasks =[]        
@@ -37,15 +42,14 @@ async def main():
             else:
                 browser = await p.chromium.launch(headless=False, args=["--start-maximized"])
                 exchange_context = await browser.new_context(no_viewport=True)
-                
+
             task = asyncio.create_task(exchange["fn"](exchange_context))
-            tasks.append(task)    
+            tasks.append(task)
         try:
-            await asyncio.gather(*tasks,return_exceptions=True)   
+            await asyncio.gather(*tasks,return_exceptions=True)
         except Exception as e:
             print("🔴 Uncaught exception in tasks:", e)
 
-            
 
 if __name__ == "__main__":
     asyncio.run(main())

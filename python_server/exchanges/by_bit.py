@@ -16,7 +16,7 @@ from time import sleep
  
 from utils.scraping_utils import wait_for_elements
 
-
+import queue
 
 
 # !!  canvas !
@@ -24,10 +24,10 @@ from utils.scraping_utils import wait_for_elements
 
 by_bit_symbols = {
     "BTCUSDT":"BTC/USDT", 
-    "ETHUSDT":"ETH/USDT", 
-    "LTCUSDT":"LTC/USDT", 
-    "XRPUSDT":"XRP/USDT", 
-    "BCHUSDT":"BCH/USDT", 
+    # "ETHUSDT":"ETH/USDT", 
+    # "LTCUSDT":"LTC/USDT", 
+    # "XRPUSDT":"XRP/USDT", 
+    # "BCHUSDT":"BCH/USDT", 
 }
 
  
@@ -88,27 +88,55 @@ async def fetch_kraken_data(page,db_symbol):
 
 async def get_by_bit_coin_order_book(by_bit_symbol,db_symbol, context):
     page = await context.new_page()
+    
+    def on_websocket(ws):
+            order_books_str = ""
+
+            async def on_frame_received(payload: str):
+                nonlocal order_books_str 
+                if "mergedDepth" in payload:
+                    order_books_str = payload
+                    print(order_books_str)
+
+            print(1)
+
+            ws.on("framereceived", on_frame_received)
+
+            while True:
+                print(2)
+                if len(order_books_str) > 0:
+                    print(order_books_str)
+                    sleep(1)
+                    # for data in order_books_str:
+                    #     try:
+                    #         print("working on",data)
+                    #     except asyncio.TimeoutError:
+                    #         print("no payload saved")
+            # asyncio.create_task(process_order_book())
+
+    page.on("websocket", on_websocket)
+
     await page.goto(f"https://www.bybit.com/en/trade/spot/{by_bit_symbol}", wait_until="domcontentloaded")
     
-    # ! wait for the first ask to load and wait one more second
-    await asyncio.sleep(5)
-    sk_light_object =page.locator("")
-    await wait_for_elements(sk_light_object,1)
-    print("get ask_light_object")
-    await asyncio.sleep(5)
+    # # ! wait for the first ask to load and wait one more second
+    # await asyncio.sleep(5)
+    # sk_light_object =page.locator("")
+    # await wait_for_elements(sk_light_object,1)
+    # print("get ask_light_object")
+    # await asyncio.sleep(5)
 
-     # ! run every second and update data without navigation
+    #  # ! run every second and update data without navigation
     while True:
-            try:
-                data = await fetch_kraken_data(page, db_symbol)
-                if data:
-                    price_doc = OrderBook(**data)
-                    await price_doc.insert()
-                    print(f"Inserted kraken {bybit_symbol} at {data['timestamp']}")
-            except Exception as e:
-                print(f"Error fetching data: {e}")
-                traceback.print_exc()
-            await asyncio.sleep(1) 
+            # try:
+            #     data = await fetch_kraken_data(page, db_symbol)
+            #     if data:
+            #         price_doc = OrderBook(**data)
+            #         # await price_doc.insert()
+            #         print(f"Inserted kraken {bybit_symbol} at {data['timestamp']}")
+            # except Exception as e:
+            #     print(f"Error fetching data: {e}")
+            #     traceback.print_exc()
+            await asyncio.sleep(10) 
 
 
 
