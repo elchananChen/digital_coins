@@ -17,8 +17,8 @@ from time import sleep
 from utils.scraping_utils import wait_for_elements
 
 import queue
-
-
+import time
+import json
 # !!  canvas !
 
 
@@ -88,31 +88,39 @@ async def fetch_kraken_data(page,db_symbol):
 
 async def get_by_bit_coin_order_book(by_bit_symbol,db_symbol, context):
     page = await context.new_page()
-    
+        
     def on_websocket(ws):
-            order_books_str = ""
+            order_books_str = []
+            last_save_time = 0
+        
+            async def process_data():
+                nonlocal order_books_str
+                print(f"Processing {len(order_books_str)} items")
+                for data in order_books_str:
+                    json_data = json.loads(data)
+                    print(json_data["topic"])
+                # order_books_str.clear()
 
             async def on_frame_received(payload: str):
                 nonlocal order_books_str 
-                if "mergedDepth" in payload:
-                    order_books_str = payload
-                    print(order_books_str)
+                nonlocal last_save_time 
+                
+                now = time.time()
+
+                if now - last_save_time >= 1:  
+                    print(3)
+                    # print(f"order_books_str{order_books_str}")
+                    if '"topic":"mergedDepth"' in payload:
+                        order_books_str.append(payload)
+                        # print(order_books_str)
+                        last_save_time = now
+                        asyncio.create_task(process_data())
 
             print(1)
 
             ws.on("framereceived", on_frame_received)
-
-            while True:
-                print(2)
-                if len(order_books_str) > 0:
-                    print(order_books_str)
-                    sleep(1)
-                    # for data in order_books_str:
-                    #     try:
-                    #         print("working on",data)
-                    #     except asyncio.TimeoutError:
-                    #         print("no payload saved")
-            # asyncio.create_task(process_order_book())
+            print(2)
+            
 
     page.on("websocket", on_websocket)
 
