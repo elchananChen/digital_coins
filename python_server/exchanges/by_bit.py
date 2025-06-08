@@ -24,127 +24,85 @@ import json
 
 by_bit_symbols = {
     "BTCUSDT":"BTC/USDT", 
-    # "ETHUSDT":"ETH/USDT", 
-    # "LTCUSDT":"LTC/USDT", 
-    # "XRPUSDT":"XRP/USDT", 
-    # "BCHUSDT":"BCH/USDT", 
+    "ETHUSDT":"ETH/USDT", 
+    "LTCUSDT":"LTC/USDT", 
+    "XRPUSDT":"XRP/USDT", 
+    "BCHUSDT":"BCH/USDT", 
 }
 
- 
-async def fetch_kraken_data(page,db_symbol):    
-    #  ! get the order book wrapper 
-    wrapper = page.locator("//div[@class='flex-1 flex relative overflow-auto h-full']//div[@class='size-full flex flex-col']//div[@class='flex size-full relative overflow-hidden justify-center flex-col']//div[contains(@class, 'group relative divide-y divide-transparent w-full')]")
 
-    # ! get the ask and bids wrapper
-    asks_wrapper = wrapper.nth(0)
-    bids_wrapper = wrapper.nth(1)
-
-    # ! get the rows asks and bids container
-    rows_asks = asks_wrapper.locator("//div[@class='flex items-center relative h-6']")
-    rows_bids = bids_wrapper.locator("//div[@class='flex items-center relative h-6']")
-    
-    # ! run on the "asks and bids rows"
-    # ! get the price and amount for every row + append them to "asks" and "bids"
-    try:
-        count = await rows_asks.count()
-        now = datetime.now(timezone.utc)
-        asks = []
-        bids = []
-        for i in range(count):
-            row_asks = rows_asks.nth(i)
-            row_bids = rows_bids.nth(i)
-
-            ask_price = await row_asks.locator("//span[contains(@class, 'hover:font-bold')]").nth(0).inner_text()
-            ask_amount = await row_asks.locator("//span[contains(@class, 'hover:font-bold')]").nth(1).inner_text()
-            
-            bid_price = await row_bids.locator("//span[contains(@class, 'hover:font-bold')]").nth(0).inner_text()
-            bid_amount = await row_bids.locator("//span[contains(@class, 'hover:font-bold')]").nth(1).inner_text()
-
-            ask =  {"price": ask_price.replace(',', ''),"amount": ask_amount.replace(',', '')}
-            bid =  {"price": bid_price.replace(',', ''),"amount": bid_amount.replace(',', '')}
-            asks.append(ask)
-            bids.append(bid)
-
-        # ! make a valid db data for kraken
-        data =  { "symbol": db_symbol,"exchange": "kraken","timestamp": now , "bids": bids,"asks": asks }
-
-        # ! check that the highest bid low from the lower ask
-        try:    
-            assert float(asks[count - 1]["price"]) > float(bids[0]["price"]), "❌ ask price should be greater than bid price"
-            print("✅ Logical order book structure verified.")
-        except AssertionError as e:
-            print(str(e))  
-
-        # !return data
-        # print(data)
-        return data
-
-    except TimeoutError:
-        print("❌ Element did not appear in time – maybe the page is slow or the XPath is incorrect")
-        traceback.print_exc()
+async def save_to_db(data, exchange_name, exchange_symbol):
+    try:           
+        price_doc = OrderBook(**data)
+        await price_doc.insert()
+        print(f"Inserted {exchange_name} {exchange_symbol} at {data['timestamp']}")
     except Exception as e:
-        print(f"❗ Unexpected error: {e}")
+        print(f"Error fetching data: {e}")
+        traceback.print_exc()
 
-
-async def get_by_bit_coin_order_book(by_bit_symbol,db_symbol, context):
+async def get_by_bit_coin_order_book(by_bit_symbol, db_symbol, context):
     page = await context.new_page()
         
     def on_websocket(ws):
-            order_books_str = []
+            # will be overwrite every half a second
+            order_books_string = ""
+
+            async def process_data():
+                nonlocal order_books_string
+                # print(f"Processing {len(order_books_string)} items")
+
+                # Convert to json
+                json_data = json.loads(order_books_string)
+
+                # TODO: add here full validation of the data
+                if "topic" not in json_data:
+                    print("no topic in json")
+                    traceback.print_exc()
+                    return
+                
+                origin_asks = json_data["data"][0]["a"]
+                origin_bids = json_data["data"][0]["b"]
+                origin_time = json_data["data"][0]["t"]
+            
+                # Convert to datetime in UTC format
+                timestamp_s = origin_time / 1000
+                datetime_utc = datetime.fromtimestamp(timestamp_s, tz=timezone.utc)
+                timestamp = datetime_utc.isoformat(timespec='milliseconds')
+                
+                asks = []
+                bids = []
+                for ask in origin_asks:
+                    asks.append({"price": ask[0] , "amount": ask[1]} )
+                for bid in origin_bids:
+                    bids.append({"price": bid[0] , "amount": bid[1]} )
+                data =  { "symbol": db_symbol,"exchange": "byBit","timestamp": timestamp , "bids": bids,"asks": asks }
+                # print (data)
+                await save_to_db(exchange_name="by_bit", data=data, exchange_symbol=by_bit_symbol)
+               
+
+            # every time the data come - will be assign to this time
+            # for control of the data processing timing without interrupt the frame listening process.
             last_save_time = 0
         
-            async def process_data():
-                nonlocal order_books_str
-                print(f"Processing {len(order_books_str)} items")
-                for data in order_books_str:
-                    json_data = json.loads(data)
-                    print(json_data["topic"])
-                # order_books_str.clear()
-
             async def on_frame_received(payload: str):
-                nonlocal order_books_str 
+                nonlocal order_books_string 
                 nonlocal last_save_time 
                 
                 now = time.time()
 
                 if now - last_save_time >= 1:  
-                    print(3)
-                    # print(f"order_books_str{order_books_str}")
                     if '"topic":"mergedDepth"' in payload:
-                        order_books_str.append(payload)
-                        # print(order_books_str)
+                        order_books_string = payload
                         last_save_time = now
                         asyncio.create_task(process_data())
-
-            print(1)
-
             ws.on("framereceived", on_frame_received)
-            print(2)
-            
 
     page.on("websocket", on_websocket)
 
     await page.goto(f"https://www.bybit.com/en/trade/spot/{by_bit_symbol}", wait_until="domcontentloaded")
-    
-    # # ! wait for the first ask to load and wait one more second
-    # await asyncio.sleep(5)
-    # sk_light_object =page.locator("")
-    # await wait_for_elements(sk_light_object,1)
-    # print("get ask_light_object")
-    # await asyncio.sleep(5)
-
-    #  # ! run every second and update data without navigation
-    while True:
-            # try:
-            #     data = await fetch_kraken_data(page, db_symbol)
-            #     if data:
-            #         price_doc = OrderBook(**data)
-            #         # await price_doc.insert()
-            #         print(f"Inserted kraken {bybit_symbol} at {data['timestamp']}")
-            # except Exception as e:
-            #     print(f"Error fetching data: {e}")
-            #     traceback.print_exc()
-            await asyncio.sleep(10) 
+   
+    # To run the function always (like while True - just more efficient)
+    await asyncio.Event().wait() 
 
 
 

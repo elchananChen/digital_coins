@@ -61,7 +61,7 @@ async def fetch_kraken_data(page,db_symbol):
         # ! check that the highest bid low from the lower ask
         try:    
             assert float(asks[count - 1]["price"]) > float(bids[0]["price"]), "❌ ask price should be greater than bid price"
-            print("✅ Logical order book structure verified.")
+            # print("✅ Logical order book structure verified.")
         except AssertionError as e:
             print(str(e))  
 

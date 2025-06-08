@@ -40,9 +40,13 @@ poetry run python graphs/monitor_graph.py
 
 # binance, kraken, by bit, crypto.com , bit stamp, coinbase
 
-https://www.binance.com/en/trade/BTC_USDT?_from=markets&type=spot
-https://pro.kraken.com/app/trade/btc-usd
-https://www.bybit.com/en/trade/spot/BTC/USDT
+https://www.binance.com/en/trade/BTC_USDT?_from=markets&type=spot √
+https://pro.kraken.com/app/trade/btc-usd √
+https://www.bybit.com/en/trade/spot/BTC/USDT √
+https://crypto.com/exchange/trade/BTC_USDT √
+
+https://www.bitstamp.net/trade/btcusd/
+https://www.coinbase.com/advanced-trade/spot/BTC-USD
 
 <!-- installation -->
 

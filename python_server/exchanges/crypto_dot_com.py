@@ -14,19 +14,10 @@ crypto_symbols = {
     "BTCUSDT":"BTC_USDT", 
     "ETHUSDT":"ETH_USDT", 
     "LTCUSDT":"LTC_USDT", 
-    # "XRPUSDT":"XRP_USDT", 
-    # "BCHUSDT":"BCH_USDT", 
+    "XRPUSDT":"XRP_USDT", 
+    "BCHUSDT":"BCH_USDT", 
 }
 
-
-# row-ask/bids = e-list-item
-
-# ask container = e-list e-order-book-list e-order-book-asks-list
-# bids container = e-list e-order-book-list e-order-book-bids-list
-
-
-# span price = e-number-dim text-success-default
-# span amount = e-number-dim
 
 async def fetch_crypto_data(page,db_symbol):
         try:
@@ -59,7 +50,7 @@ async def fetch_crypto_data(page,db_symbol):
 
 
             data = { "symbol": db_symbol,"exchange": "cryptoDotCom", "timestamp":now, "bids": bids,"asks": asks }
-            print(data)
+            # print(data)
             return data
         except TimeoutError:
             print("❌ Element did not appear in time – maybe the page is slow or the XPath is incorrect")
@@ -83,7 +74,7 @@ async def get_crypto_coin_order_book(crypto_symbol,db_symbol, browser):
     ask_light_object = page.locator("//div[@class='e-order-book-last-column']")
     await ask_light_object.first.wait_for(timeout=20000)
     await asyncio.sleep(1)
-    print(await ask_light_object.inner_text())
+    # print(await ask_light_object.inner_text())
     
     # run every second and update data without navigation
     while True:

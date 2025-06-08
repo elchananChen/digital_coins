@@ -3,26 +3,34 @@ from core import init_db, start_monitoring_v1, start_monitoring_v2 ,start_monito
 from exchanges.binance import run_binance_scraper
 from exchanges.kraken import run_kraken_scraper
 from exchanges.by_bit import run_by_bit_scraper
+from exchanges.crypto_dot_com import run_crypto_scraper
+
+
 from playwright.async_api import async_playwright
 
 
 
 exchanges = [
-    # {
-    #     "name": "binance",
-    #     "fn": run_binance_scraper,
-    #     "headless": True,
-    # },
-    # {
-    #     "name": "kraken",
-    #     "fn": run_kraken_scraper,
-    #     "headless": False,
-    # },
+    {
+        "name": "binance",
+        "fn": run_binance_scraper,
+        "headless": True,
+    },
+    {
+        "name": "kraken",
+        "fn": run_kraken_scraper,
+        "headless": False,
+    },
+    {
+        "name": "cryptoDotCom",
+        "fn": run_crypto_scraper,
+        "headless": False,
+    },
     {
         "name": "byBit",
         "fn": run_by_bit_scraper,
         "headless": False,
-    },
+    }
 ]
 
 
@@ -31,7 +39,7 @@ async def main():
     await init_db()
     # start_monitoring_v1()
     # start_monitoring_v2()
-    # start_monitoring_v3()
+    start_monitoring_v3()
 
     async with async_playwright() as p:
         tasks =[]        
