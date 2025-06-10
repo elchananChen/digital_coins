@@ -13,3 +13,4 @@ async def init_db():
     client = AsyncIOMotorClient(DB_URI)
     await init_beanie(database=client[DB_NAME], document_models=[OrderBook])
     print("successfully connect to db")
+    return client

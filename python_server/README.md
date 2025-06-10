@@ -1,6 +1,6 @@
 # warning !!
 
-heavy process - need strong cpu !
+heavy process - need a strong cpu !
 
 <!-- structure -->
 
@@ -36,6 +36,11 @@ poetry run python main.py
 
 poetry run python graphs/monitor_graph.py
 
+# redis
+
+start redis (in computer terminal): docker run --name coins_python_sever -p 6380:6379 -d redis redis-server --port 6380
+stop redis : docker stop coins_python_sever
+
 # exchanges urls
 
 # binance, kraken, by bit, crypto.com , bit stamp, coinbase
@@ -44,7 +49,6 @@ https://www.binance.com/en/trade/BTC_USDT?_from=markets&type=spot √
 https://pro.kraken.com/app/trade/btc-usd √
 https://www.bybit.com/en/trade/spot/BTC/USDT √
 https://crypto.com/exchange/trade/BTC_USDT √
-
 https://www.bitstamp.net/trade/btcusd/
 https://www.coinbase.com/advanced-trade/spot/BTC-USD
 

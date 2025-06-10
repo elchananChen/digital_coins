@@ -7,16 +7,16 @@ import os
 
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "ScrapingOrderBook")
 
-class Order(BaseModel):
-    price: str
-    amount: str
+# class Order(BaseModel):
+#     price: str
+#     amount: str
 
 class OrderBook(Document):
     symbol: str
     exchange: str
     timestamp: datetime
-    bids: List[Order]
-    asks: List[Order]
+    bids: List
+    asks: List
 
     class Settings:
         name = COLLECTION_NAME

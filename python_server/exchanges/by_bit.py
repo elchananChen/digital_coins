@@ -1,5 +1,3 @@
-# https://www.bybit.com/en/trade/spot/BTC/USDT
-
 # dates
 from datetime import datetime, timezone
 
@@ -19,7 +17,7 @@ from utils.scraping_utils import wait_for_elements
 import queue
 import time
 import json
-# !!  canvas !
+
 
 
 by_bit_symbols = {
