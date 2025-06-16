@@ -26,12 +26,19 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-insert_tracker = {"start": datetime.now(), "coins_sum": len(bit_stamp_symbols)}
+tracker = {"start": datetime.now(), "coins_sum": len(bit_stamp_symbols)}
 errors_tracker = {}
 relevant_payloads_tracker_with_timeout = {}
 relevant_payloads_tracker = {}
-save_to_db_time_tracker = {}
 
+
+
+def update_insert_tracker(tracker: dict, key: str,insert_number: int, insert_time: int):
+    if key not in tracker:        
+        tracker[key] = [insert_number,datetime.now(),[insert_number,insert_time]]
+    else:        
+        # tracker[key].append([insert_number,insert_time])
+        tracker[key][0] += insert_number
 
 def update_tracker(tracker: dict, symbol: str, first_message = None, error_type: None | str = None, insert_time:None | int = None):
     if symbol not in tracker:
@@ -52,7 +59,7 @@ def update_tracker(tracker: dict, symbol: str, first_message = None, error_type:
         tracker[symbol][0] += 1
 
 
-async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,redis_client, sleep_time=0):
+async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,redis_client,exchange_name, sleep_time=0):
     try:
         page = await context.new_page()
 
@@ -96,12 +103,13 @@ async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,red
                     datetime_utc = datetime.fromtimestamp(origin_time, tz=timezone.utc)
                     timestamp = datetime_utc.isoformat(timespec='milliseconds')
 
-                    data =  { "symbol": db_symbol,"exchange": "bitStamp","timestamp": timestamp , "bids": origin_bids,"asks": origin_asks }
+                    data =  { "symbol": db_symbol,"exchange": exchange_name,"timestamp": timestamp , "bids": origin_bids,"asks": origin_asks }
                     data_as_string = json.dumps(data)
-                    send_to_redis_queue(redis_client, data_as_string)
+                    await send_to_redis_queue(redis_client, data_as_string, db_symbol,exchange_name,update_insert_tracker, tracker)
     
                 # every time the data come - will be assign to this time
                 # for control of the data processing timing without interrupt the frame listening process.
+
                 last_save_time = 0
                 async def on_frame_received(payload: str):
                     nonlocal order_books_string 
@@ -150,33 +158,33 @@ async def safe_wrapper(coro):
         
 # all coins running together in the same time
 #  but! initial the process after some time for each batch
-async def run_bit_stamp_scraper(context , redis_client):
+async def run_bit_stamp_scraper_redis(context , redis_client,exchange_name):
     tasks = []
     print(f"Total symbols: {len(bit_stamp_symbols)}")
     initial_delay = 10
     for i, (db_symbol,bit_stamp_symbol) in enumerate(bit_stamp_symbols.items()):
         if initial_delay == i:
-            initial_delay += 10
+            initial_delay += 20
         sleep_time = initial_delay -10
-        task = asyncio.create_task(safe_wrapper(get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context, redis_client, sleep_time )))
+        task = asyncio.create_task(safe_wrapper(get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context, redis_client,exchange_name, sleep_time )))
         tasks.append(task)
     try:
         await asyncio.gather(*tasks, return_exceptions=True)
     except asyncio.CancelledError:
         end = datetime.now()
-        total_time = end - insert_tracker["start"] 
-        insert_tracker.update({
+        total_time = end - tracker["start"] 
+        tracker.update({
             "end": datetime.now(),
             "total_time": str(total_time)
         })
 
-        print(f"sum of the coins insert successfully is {len(insert_tracker) - 4}")
+        print(f"sum of the coins insert successfully is {len(tracker) - 4}")
         print("errors_tracker", errors_tracker)
         print("relevant_payloads_tracker ",relevant_payloads_tracker)
         print("relevant_payloads_tracker_timeout ",relevant_payloads_tracker_with_timeout)
-        print("save_to_db_time_tracker ",save_to_db_time_tracker)
+        
         print("relevant_payloads_tracker_timeout ",relevant_payloads_tracker_with_timeout)
-        print("insert_tracker: ", insert_tracker)
+        print("tracker: ", tracker)
 
     except Exception as e:
         print("🔴 Uncaught exception in tasks:", e)

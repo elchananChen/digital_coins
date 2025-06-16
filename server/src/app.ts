@@ -37,7 +37,7 @@ if (process.env.DB_URI) {
         { name: "binance", fn: insertBinance },
         { name: "kraken", fn: insertKraken },
         { name: "coinbase", fn: insertCoinbase },
-        { name: "cryptoDotCom", fn: insertCryptoDotCom },
+        { name: "`cryptoDotCom`", fn: insertCryptoDotCom },
         { name: "byBit", fn: insertByBit },
         { name: "bitStamp", fn: insertBitStamp },
       ];

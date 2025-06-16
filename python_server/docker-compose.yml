@@ -1,0 +1,41 @@
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    restart: always
+
+  db_worker:
+    build: .
+    command: poetry run python db_worker.py
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_DB: ${REDIS_DB}
+      MONGO_URI: ${MONGO_URI} # <-- וודא שב-core/db.py קוראים MONGO_URI
+      DB_NAME: ${DB_NAME}
+      COLLECTION_NAME: ${COLLECTION_NAME} # משתנה סביבה נוסף עבור models.py
+    restart: on-failure
+
+  scraper_worker: # זהו שירות ה-Scraper Worker (משתמש ב-Playwright, כותב ל-Redis)
+    build: .
+    command: poetry run python main.py # <-- מריץ את קוד ה-Scraper
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_DB: ${REDIS_DB}
+    restart: on-failure
+
+volumes:
+  mongodb_data:

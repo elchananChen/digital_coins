@@ -13,7 +13,21 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import redis.asyncio as redis
 
 from core import OrderBook
+
+from typing import List
+
 load_dotenv()
+
+
+
+def update_insert_tracker(tracker: dict, key: str,insert_number: int, insert_time: int):
+    if key not in tracker:        
+        tracker[key] = [insert_number,datetime.now(),[insert_number,insert_time]]
+    else:        
+        # tracker[key].append([insert_number,insert_time])
+        tracker[key][0] += insert_number
+
+insert_tracker = {}
 
 # הגדרות Batching (תצטרך לכוונן אותן!)
 BATCH_SIZE = 100 # מספר המסמכים לאגור לפני כתיבה
@@ -29,18 +43,34 @@ async def flush_data(redis_client, key: str):
     """Writes accumulated data for a specific key (exchange@symbol) to MongoDB."""
     if not key in data_buffer or not data_buffer[key]:
         return # אין נתונים ל-flush עבור מפתח זה
-    documents_to_insert_snapshot = list(data_buffer[key])
-    data_buffer[key].clear()  
-    last_flush_time[key] = datetime.now() # אפס את טיימר הפלאש
+
+    documents_to_insert_snapshot: List[OrderBook] = []
+    for doc_dict in data_buffer[key]:
+        try:
+            documents_to_insert_snapshot.append(OrderBook(**doc_dict))
+        except Exception as e:
+            print(f"Error creating OrderBook object from dict {doc_dict[key]}: {e}")
+            continue 
+    
+    data_buffer[key].clear()
+    last_flush_time[key] = datetime.now()
+
+    if not documents_to_insert_snapshot: 
+        print(f"No valid documents to flush for {key} after processing.")
+        return
+    
     try:
-        # שימוש ב-insert_many של Beanie
+        before = datetime.now()
         await OrderBook.insert_many(documents_to_insert_snapshot)
+        insert_time = datetime.now() - before
+        update_insert_tracker(insert_tracker,key,len(documents_to_insert_snapshot),insert_time.microseconds)
         print(f"Flushed {len(documents_to_insert_snapshot)} documents for {key} to MongoDB.")
     except Exception as e:
         print(f"Error flushing data for {key} to MongoDB: {e}")
         # לוגיקת טיפול בשגיאות: ניסיון חוזר, שליחה ל-DLQ, וכו'
     
         
+
 
 
 
@@ -58,7 +88,6 @@ async def process_redis_queue(redis_client: redis.Redis):
 
             _ , json_data_str = await redis_client.blpop("order_book_updates", 0)
 
-         
             decoded_data = json.loads(json_data_str)
 
             # extract the exchange and symbol for the key
@@ -176,6 +205,7 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
+        print(insert_tracker)
         print("DB Worker stopped by user.")
     except asyncio.CancelledError:
         print("DB Worker task cancelled.")

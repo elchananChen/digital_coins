@@ -10,7 +10,10 @@ from exchanges.by_bit import run_by_bit_scraper
 from exchanges.crypto_dot_com import run_crypto_scraper
 from exchanges.bit_stamp import run_bit_stamp_scraper
 from exchanges.bitstamp_v2 import run_bit_stamp_scraper_v2
+from exchanges.bit_stamp_redis import run_bit_stamp_scraper_redis
 
+
+from monitoring.utils import send_metric_log,time_async_function, scraper_run_summary_logger
 
 from playwright.async_api import async_playwright
 
@@ -44,16 +47,17 @@ exchanges = [
     # },
     {
         "name": "bitStamp",
-        "fn": run_bit_stamp_scraper,
+        "fn": run_bit_stamp_scraper_redis,
         # "fn": run_bit_stamp_scraper_v2,
         "headless": False,
     }
 ]
 
+# async_scraper_run_summary_time_decorator = time_async_function(logger_instance=scraper_run_summary_logger, component_name="Scraper Main Process", event_name="Full Run")
 
-
+# @async_scraper_run_summary_time_decorator
 async def main():
-    await init_db()
+    # await init_db()
     # start_monitoring_v1()
     # start_monitoring_v2()
     # start_monitoring_v3()
@@ -74,7 +78,7 @@ async def main():
                 browser = await p.chromium.launch(headless=False, args=["--start-maximized"])
                 exchange_context = await browser.new_context(no_viewport=True)
             
-            task = asyncio.create_task(exchange["fn"](exchange_context,redis_client))
+            task = asyncio.create_task(exchange["fn"](exchange_context,redis_client,exchange_name=exchange["name"]))
             tasks.append(task)
         try:
             await asyncio.gather(*tasks,return_exceptions=True)
