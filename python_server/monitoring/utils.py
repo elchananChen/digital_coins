@@ -1,86 +1,156 @@
 # monitors/utils.py
 import logging
-import json
+import logging.handlers
 import time
 import asyncio
 import functools
 import os
 import socket
-import sys
-import structlog
-import psutil
 
-# ייבוא מבני ה-JSON שהגדרנו ב-models.py
+import structlog
+
 from monitoring.models import (
-    BaseModel, # חשוב לייבא את BaseModel כדי לטפל במופעים של Pydantic
+    BaseMonitoringEvent,
+    ExchangeScrapeReport,
     ScraperRunSummary,
     ExchangeCurrencyEvent,
     ScraperProcessResourceMetric,
-    ErrorDetails # גם את זה נצטרך בתוך הדקורטור לטיפול בשגיאות
+    ErrorDetails 
 )
 
-# --- 1. define structlog  (and logging ) basic definition ---
+LOG_DIR = "logs"
+os.makedirs(LOG_DIR, exist_ok=True)
+# --- 1. define structlog (and logging) basic definition ---
 '''
  Set up logging in its simplest form,
  allowing structlog to control the log formatting
 '''
-
 logging.basicConfig(
-    format="%(message)s", # structlog יטפל בפורמט הסופי
-    stream=sys.stdout, # או sys.stderr, או קובץ לוג, תלוי בתצורה הסופית
-    level=logging.INFO, # רמת הלוג מינימלית
+    format="%(message)s", # final format for structlog 
+    # stream=sys.stdout, # or sys.stderr, or a log file, depending on the final configuration
+    level=logging.DEBUG, # minimum log level
+    handlers=[]
 )
 
-# פונקציית עזר להוספת host_id גלובלי לכל לוג (Processor)
-def add_host_id(logger, method_name, event_dict):
+# for adding "host_id" to all logs
+def add_host_id(_, _method_name, event_dict):
     """Adds the hostname to the event dict."""
     event_dict["host_id"] = socket.gethostname()
     return event_dict
 
-# מעבדי structlog גלובליים
-# מעבדים אלה ירוצו עבור כל לוג שיופק דרך structlog
-PROCESSORS = [
-    structlog.stdlib.add_logger_name,  # מוסיף את שם הלוגר
-    structlog.stdlib.add_log_level,    # מוסיף את רמת הלוג (INFO, ERROR וכו')
-    structlog.processors.TimeStamper(fmt="iso", utc=True), # מוסיף חותמת זמן בפורמט ISO ב-UTC
-    add_host_id, # מעבד מותאם אישית להוספת Host ID
-    structlog.processors.StackInfoRenderer(), # מוסיף stack info עבור שגיאות
-    structlog.processors.format_exc_info, # מוסיף מידע אודות אקצפשנים ללוג
-    structlog.dev.ConsoleRenderer() if os.environ.get("ENV") == "development" else structlog.processors.JSONRenderer(), # מרינדר כ-JSON בפרודקשן, כקונסול בפיתוח
+# Global structlog processors
+# These processors will run for every log produced via structlog
+PROCESSORS_PRE_RENDER = [
+    structlog.stdlib.add_logger_name,  # Adds the logger name
+    structlog.stdlib.add_log_level,    # Adds the log level (INFO, ERROR, etc.)
+    structlog.processors.TimeStamper(fmt="iso", utc=True), # Adds a timestamp in ISO format in UTC
+    add_host_id, # Custom processor to add Host ID
+    structlog.processors.StackInfoRenderer(), # Adds stack info for errors
+    structlog.processors.format_exc_info, # Adds exception information to the log
+    structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
 ]
 
 structlog.configure(
-    processors=PROCESSORS,
+    processors=PROCESSORS_PRE_RENDER,
     logger_factory=structlog.stdlib.LoggerFactory(),
     wrapper_class=structlog.stdlib.BoundLogger,
     cache_logger_on_first_use=True,
 )
 
-# יצירת לוגרים ספציפיים לכל סוג לוג
-# נגדיר אותם כמופע יחיד כדי שיהיו זמינים בקלות לייבוא.
-# אלו יהיו הלוגרים שנשתמש בהם כדי לשלוח את המדדים השונים.
-scraper_events_logger = structlog.get_logger("scraper.events") # לאירועים פר מטבע/בורסה
-scraper_run_summary_logger = structlog.get_logger("scraper.run_summary") # לסיכום ריצה
-scraper_resource_logger = structlog.get_logger("scraper.resources") # למדדי משאבים
+
+# --- Setup file logger ---
+def setup_file_logger(name: str, filename: str, level=logging.INFO):
+    """
+    Helper function to set up a logger for writing to a file with rotation.
+    - name: The name of the logger (e.g., 'scraper.events'). This is the name of the logger within the standard logging system.
+    - filename: The name of the file where logs will be saved (e.g., 'scraper_events.log').
+    - level: The minimum logging level to be printed for this logger (e.g., logging.INFO).
+    """
+    # 1. Create an instance of the standard Python logger
+    std_logger = logging.getLogger(name)
+    std_logger.setLevel(level)
+    # Clear previous handlers to prevent duplicates if the function is called multiple times
+    std_logger.handlers = []
+
+    # 2. Create a formatter that will work with structlog
+    # We will use structlog's JSONRenderer so that logs are in JSON format in the file.
+    # The foreign_pre_chain ensures that global structlog processors are applied.
+    file_formatter = structlog.stdlib.ProcessorFormatter(
+        processor=structlog.processors.JSONRenderer(),
+        foreign_pre_chain=PROCESSORS_PRE_RENDER,
+    )
+
+    # 3. Configure the handler for writing to a file with rotation
+    file_handler = logging.handlers.RotatingFileHandler(
+        os.path.join(LOG_DIR, filename), # Full path to the log file
+        maxBytes=10 * 1024 * 1024,       # 10 MB - maximum size before rotation
+        backupCount=5                    # Keep 5 old backup files
+    )
+    file_handler.setFormatter(file_formatter) # Set the formatter for the handler
+    std_logger.addHandler(file_handler) # Add the handler to the standard logger
+
+    # 4. Return a structlog logger instance linked to the standard logger we configured.
+    # This is the logger you will use in your code.
+    return structlog.get_logger(name)
 
 
-# --- 2. פונקציית עזר לשליחת מדדים/לוגים ---
-def send_metric_log(logger_instance: structlog.stdlib.BoundLogger, model_instance: BaseModel):
+
+# Create specific loggers for each log type
+# ... (Rest of the code for specific logger definitions) ...
+
+
+# Create specific loggers for each log type
+# We'll define them as a single instance so they are easily available for import.
+# These will be the loggers we use to send the different metrics.
+scraper_events_logger = setup_file_logger(
+    "scraper.events", "scraper_events.log", level=logging.INFO
+    ) # For per-currency/exchange events
+scraper_run_summary_logger = setup_file_logger(
+    "scraper.run_summary", "scraper_run_summary.log", level=logging.INFO
+    ) # For full run summary
+exchange_scrape_report_logger = setup_file_logger(
+    "scraper.exchange_report", "exchange_scrape_report.log", level=logging.INFO
+    ) # For per-exchange summary
+scraper_resource_logger = setup_file_logger(
+    "scraper.resources", "scraper_resources.log", level=logging.INFO
+    ) # For resource metrics
+
+# --- 2. Helper function for sending metrics/logs ---
+
+def send_metric_log(model_instance: BaseMonitoringEvent): 
     """
-    פונקציית עזר לשליחת לוגים/מדדים מובנים.
-    מקבלת מופע לוגר ומופע של מודל Pydantic.
+    Helper function for sending structured logs/metrics.
+    Receives an instance of a Pydantic model (which inherits from BaseMonitoringEvent).
+    The function selects the appropriate logger and sends the data.
     """
-    # Pydantic's .model_dump() ממיר את האובייקט למילון פייתון.
-    # structlog יטפל ביתר התוספות (כמו timestamp, host_id) והרינדור ל-JSON.
+    if isinstance(model_instance, ScraperRunSummary):
+        logger_instance = scraper_run_summary_logger
+    elif isinstance(model_instance, ExchangeScrapeReport):
+        logger_instance = exchange_scrape_report_logger
+    elif isinstance(model_instance, ExchangeCurrencyEvent):
+        logger_instance = scraper_events_logger
+    elif isinstance(model_instance, ScraperProcessResourceMetric):
+        logger_instance = scraper_resource_logger
+    else:
+        # Log an error if an unknown model is received
+        structlog.get_logger("monitoring.utils").error(
+            "Attempted to send metric with unknown model type",
+            model_type=type(model_instance).__name__,
+            data=model_instance.model_dump(mode='json')
+        )
+        return
+
+    
+    # Pydantic's .model_dump() converts the object to a Python dictionary.
+    # structlog will handle the rest of the additions (like timestamp, host_id) and JSON rendering.
     logger_instance.info("Monitoring Event", **model_instance.model_dump(mode='json'))
 
-# --- 3. דקורטורים אסינכרוניים לניטור ---
 
-def time_async_function(component_name: str, event_name: str, logger_instance: structlog.stdlib.BoundLogger):
+# --- 3. Asynchronous decorators for monitoring ---
+def time_async_function(component_name: str, event_name: str):
     """
-    דקורטור למדידת זמן ריצה של קורוטינה ושליחת מדד.
-    הדקורטור מצפה שהפונקציה העטופה תחזיר אובייקט Pydantic שלם (כמו ScraperRunSummary)
-    אם היא הפונקציה הראשית, או יעבוד עם ExchangeCurrencyEvent אחרת.
+    Decorator for measuring coroutine execution time and sending an ExchangeCurrencyEvent metric.
+    If the wrapped function returns a ScraperRunSummary, the metric will be sent specifically for it.
     """
     def decorator(func):
         @functools.wraps(func)
@@ -89,35 +159,35 @@ def time_async_function(component_name: str, event_name: str, logger_instance: s
             result = None
             try:
                 result = await func(*args, **kwargs)
-                return result
             finally:
                 end_time = time.perf_counter()
                 duration_ms = (end_time - start_time) * 1000
 
                 if isinstance(result, ScraperRunSummary):
-                    # אם הפונקציה החזירה ScraperRunSummary, נעדכן את השדה duration_ms שלו
-                    # ונשלח אותו.
                     result.total_run_duration_ms = duration_ms
-                    send_metric_log(logger_instance, result)
+                    send_metric_log(result)
+                elif isinstance(result, ExchangeScrapeReport): # Also add handling for ExchangeScrapeReport
+                    # If this is the main exchange function returning its report,
+                    # will be handled in the overall ScraperRunSummary.
+                    # For now, we'll omit duration_ms from ExchangeScrapeReport if it's not present there.
+                    send_metric_log(result)
                 else:
-                    # אחרת, נשלח מדד רגיל של ExchangeCurrencyEvent
-                    # (זהו תרחיש עבור מדידת פונקציות פנימיות יותר)
                     send_metric_log(
-                        logger_instance,
                         ExchangeCurrencyEvent(
                             component_name=component_name,
-                            currency_pair=kwargs.get('currency_pair', 'N/A'), # נניח ש-currency_pair נמצא ב-kwargs
+                            currency_pair=kwargs.get('currency_pair', 'N/A'), 
                             event_name=event_name,
                             duration_ms=duration_ms
                         )
                     )
+            return result # Return the original result of the function
         return wrapper
     return decorator
 
 
-def handle_async_errors(component_name: str, logger_instance: structlog.stdlib.BoundLogger, is_critical: bool = False):
+def handle_async_errors(component_name: str, is_critical: bool = False):
     """
-    דקורטור לטיפול ושליחת שגיאות מקורוטינה.
+    Decorator for handling and sending errors from a coroutine as an ExchangeCurrencyEvent.
     """
     def decorator(func):
         @functools.wraps(func)
@@ -125,36 +195,35 @@ def handle_async_errors(component_name: str, logger_instance: structlog.stdlib.B
             try:
                 return await func(*args, **kwargs)
             except Exception as e:
-                # יצירת מופע של ErrorDetails
                 error_details = ErrorDetails(
                     error_code=type(e).__name__,
                     error_message=str(e),
                     is_critical=is_critical,
-                    stack_trace=None # structlog.processors.format_exc_info יטפל בזה
+                    stack_trace=None # structlog.processors.format_exc_info will handle this
                 )
-                
-                # שליחת לוג שגיאה עם פרטי המודל
-                # structlog יוסיף את ה-exc_info באופן אוטומטי אם הוא ב-PROCESSORS
-                logger_instance.error(
-                    f"Error in {func.__name__}",
-                    component_name=component_name,
-                    currency_pair=kwargs.get('currency_pair', 'N/A'), # אם רלוונטי
-                    event_name=f"{func.__name__}_failed",
-                    error_details=error_details.model_dump(mode='json'), # ממיר את מודל השגיאה למילון
-                    exc_info=True # חשוב מאוד כדי ש-structlog יכלול stack trace מלא
+
+                # Send an error log with the model details
+                # structlog will automatically add exc_info if it's in PROCESSORS
+                send_metric_log(
+                    ExchangeCurrencyEvent(
+                        component_name=component_name,
+                        currency_pair=kwargs.get('currency_pair', 'N/A'), # If relevant
+                        event_name=f"{func.__name__}_failed",
+                        error_details=error_details
+                    )
                 )
-                raise # חשוב להעביר את השגיאה הלאה אם היא לא מטופלת באופן מלא ברמה זו.
+                # raise # Important to re-raise the error if it's not fully handled at this level.
         return wrapper
     return decorator
 
 
-# --- 4. פונקציה לאיסוף ושליחת מדדי משאבים (סקריפר) ---
-# נשתמש בזה רק כשניישם את ניטור המשאבים.
+# --- 4. Function for collecting and sending resource metrics (scraper) ---
+# We will use this only when we implement resource monitoring.
 async def start_scraper_resource_monitoring(pid: int, interval_seconds: int = 10):
     """
-    מתחיל משימה אסינכרונית לניטור משאבי תהליך הסקריפר.
+    Starts an asynchronous task for monitoring scraper process resources.
     """
-    # ... (קוד זה ימומש כשאניידע איך ליישם את ניטור המשאבים) ...
-    # לבינתיים, נשים פה placeholder כדי לא לשבור את הקובץ
+    # ... (This code will be implemented when I figure out how to implement resource monitoring) ...
+    # For now, we'll put a placeholder here so it doesn't break the file
     scraper_resource_logger.info("Resource monitoring function placeholder called for pid", pid=pid)
-    await asyncio.sleep(0.1) # כדי לאפשר ללופ האסינכרוני להמשיך
+    await asyncio.sleep(0.1) # To allow the asynchronous loop to continue

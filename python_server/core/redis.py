@@ -1,9 +1,14 @@
 import redis
 import os
 from dotenv import load_dotenv
-from datetime import datetime
+
+
 # for typing
 import redis.asyncio as redis
+
+# error handlers from utils
+from utils import log_and_categorize_redis_error
+
 
 load_dotenv()
 
@@ -31,13 +36,12 @@ async def init_redis_client():
         return None
 
 
-async def send_to_redis_queue(redis_client: redis.Redis, json_data: str,symbol:str, exchange_name,update_tracker,tracker:dict):
+async def send_to_redis_queue(redis_client: redis.Redis, json_data: str,symbol:str, exchange_name, error_summary:dict):
     try:
         # print("REDIS pre push")
-        before = datetime.now()
         await redis_client.rpush("order_book_updates", json_data)
-        insert_time = datetime.now() - before
-        update_tracker(tracker,symbol,1,insert_time.microseconds)
+        return 1
         # print(f"Sent order book update for {symbol}@{exchange_name} to Redis.")
     except Exception as e:
-        print(f"Error sending to Redis: {e}")
+        log_and_categorize_redis_error(e=e,symbol=symbol,exchange=exchange_name,error_summary=error_summary)
+        return 0
