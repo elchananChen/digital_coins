@@ -60,7 +60,7 @@ exchanges = [
         "name": "bitStamp",
         "fn": run_bit_stamp_scraper_redis,
         # "fn": run_bit_stamp_scraper_v2,
-        "headless": False,
+        "headless": True,
     },
 ]
 
@@ -88,8 +88,20 @@ async def main(event:asyncio.Event,run_id:str):
         for exchange in exchanges:
             # background browser
             if exchange["headless"] == True:
-                headless_browser = await p.chromium.launch(headless=True)              
-                exchange_context =  await headless_browser.new_context()    
+                headless_browser = await p.chromium.launch(
+                    headless=True,
+                    args=[
+                        "--no-sandbox",
+                        "--disable-setuid-sandbox",
+                        "--disable-gpu", 
+                        "--disable-blink-features=AutomationControlled",
+                    ]
+                    )              
+                exchange_context =  await headless_browser.new_context(
+                    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                    viewport={"width": 1920, "height": 1080}, # standard resolution
+                    is_mobile=False 
+                )    
             # front browser
             else:
                 browser = await p.chromium.launch(headless=False, args=["--start-maximized"])
@@ -110,8 +122,6 @@ async def main(event:asyncio.Event,run_id:str):
                 close_status=CloseStatusEnum.planned_shutdown,
                 run_id=run_id
                 )
-
-
             return ScraperRunSummary(**run_summary_data)
         except KeyboardInterrupt as e:
 

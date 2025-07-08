@@ -3,39 +3,48 @@ services:
     image: redis:7-alpine
     ports:
       - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 1s
-      timeout: 3s
-      retries: 5
-    restart: always
+    healthcheck: # Healthcheck for Redis to ensure it's ready before other services connect
+      test: ["CMD", "redis-cli", "ping"] # Command to check Redis status
+      interval: 1s # How often to run the test (1 second)
+      timeout: 3s # How long to wait for the command to complete (3 seconds)
+      retries: 30 # Number of consecutive failures before marking as unhealthy (30 retries)
+    networks:
+      - my-network
 
   db_worker:
-    build: .
-    command: poetry run python db_worker.py
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: python_server-db_worker
+    command: poetry run python db_worker.py # Your command to run the DB worker
+    env_file:
+      - .env # Load environment variables from .env file
+    networks:
+      - my-network
     depends_on:
       redis:
-        condition: service_healthy
-    environment:
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      REDIS_DB: ${REDIS_DB}
-      MONGO_URI: ${MONGO_URI} # <-- וודא שב-core/db.py קוראים MONGO_URI
-      DB_NAME: ${DB_NAME}
-      COLLECTION_NAME: ${COLLECTION_NAME} # משתנה סביבה נוסף עבור models.py
-    restart: on-failure
+        condition: service_healthy # db_worker will wait until Redis is healthy
 
-  scraper_worker: # זהו שירות ה-Scraper Worker (משתמש ב-Playwright, כותב ל-Redis)
-    build: .
-    command: poetry run python main.py # <-- מריץ את קוד ה-Scraper
+  scraper_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: python_server-scraper_worker
+    command: poetry run python main.py # Your command to run the scraper worker
+    env_file:
+      - .env # Load environment variables from .env file
+    networks:
+      - my-network
+    volumes:
+      - ./logs:/app/logs # This line is critical
     depends_on:
       redis:
-        condition: service_healthy
-    environment:
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      REDIS_DB: ${REDIS_DB}
-    restart: on-failure
+        condition: service_healthy # scraper_worker will wait until Redis is healthy
+      # If your scraper_worker also depends on db_worker being started, uncomment the line below:
+      # db_worker:
+      #   condition: service_started
+    restart: on-failure # Restart only if the container exits with an error
 
-volumes:
-  mongodb_data:
+networks:
+  my-network:
+    driver: bridge

@@ -40,6 +40,20 @@ poetry run python db_worker.py
 
 poetry run python graphs/monitor_graph.py
 
+# docker
+
+<!-- "docker compose down" only if run already -->
+<!-- to start and see logs -->
+
+docker compose down
+docker compose up -d
+docker compose logs -f scraper_worker
+
+<!-- if code changed -->
+
+docker compose down --remove-orphans
+docker compose up --build -d
+
 # redis
 
 start redis (in computer terminal): docker run --name coins_python_sever -p 6380:6379 -d redis redis-server --port 6380

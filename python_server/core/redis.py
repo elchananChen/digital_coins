@@ -12,14 +12,15 @@ from utils import log_and_categorize_redis_error
 
 load_dotenv()
 
-# Redis
-REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
-REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
-REDIS_DB = int(os.getenv('REDIS_DB', 0))
-REDIS_PASSWORD = os.getenv('REDIS_PASSWORD')
-
 async def init_redis_client():
     try:
+
+        # Redis
+        REDIS_HOST = os.getenv('REDIS_HOST', 'redis')
+        REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
+        REDIS_DB = int(os.getenv('REDIS_DB', 0))
+        REDIS_PASSWORD = os.getenv('REDIS_PASSWORD')
+        
         redis_client = redis.Redis(
             host=REDIS_HOST,
             port=REDIS_PORT,
