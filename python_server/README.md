@@ -53,6 +53,7 @@ docker compose logs -f scraper_worker
 
 docker compose down --remove-orphans
 docker compose up --build -d
+docker compose logs -f scraper_worker
 
 # redis
 

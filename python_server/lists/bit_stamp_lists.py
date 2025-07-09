@@ -84,26 +84,26 @@ bit_stamp_symbols = {
   #   "WENUSD": "wenusd",      # Wen
   #   "POPCATUSD": "popcatusd", # Popcat
     
-    # # DeFi & Trading
-    # "INJUSD": "injusd",      # Injective Protocol
-    # "JUPUSD": "jupusd",      # Jupiter
-    # "ZRXUSD": "zrxusd",      # 0x Protocol
-    # "BATUSD": "batusd",      # Basic Attention Token
-    # "KNCUSD": "kncusd",      # Kyber Network
-    # "UMAUSD": "umausd",      # UMA
-    # "PERPUSD": "perpusd",    # Perpetual Protocol
-    # "AMPUSD": "ampusd",      # Amp
+  #   # DeFi & Trading
+  #   "INJUSD": "injusd",      # Injective Protocol
+  #   "JUPUSD": "jupusd",      # Jupiter
+  #   "ZRXUSD": "zrxusd",      # 0x Protocol
+  #   "BATUSD": "batusd",      # Basic Attention Token
+  #   "KNCUSD": "kncusd",      # Kyber Network
+  #   "UMAUSD": "umausd",      # UMA
+  #   "PERPUSD": "perpusd",    # Perpetual Protocol
+  #   "AMPUSD": "ampusd",      # Amp
     
-    # # Enterprise & Utility
-    # "ENSUSD": "ensusd",      # Ethereum Name Service
-    # "STORJUSD": "storjusd",  # Storj
-    # "AUDIOUSD": "audiousd",  # Audius
-    # "WOOUSD": "woousd",      # WOO
-    # "ZETAUSD": "zetausd",    # ZetaChain
+  #   # Enterprise & Utility
+  #   "ENSUSD": "ensusd",      # Ethereum Name Service
+  #   "STORJUSD": "storjusd",  # Storj
+  #   "AUDIOUSD": "audiousd",  # Audius
+  #   "WOOUSD": "woousd",      # WOO
+  #   "ZETAUSD": "zetausd",    # ZetaChain
     
-    # # Wrapped & Special
-    # "ONDOUSD": "ondousd",    # Ondo
-    # "SYRUPUSD": "syrupusd",  # Syrup
+  #   # Wrapped & Special
+  #   "ONDOUSD": "ondousd",    # Ondo
+  #   "SYRUPUSD": "syrupusd",  # Syrup
     
     # # Political/Meme Tokens
     # "TRUMPUSD": "trumpusd",  # Official Trump

@@ -6,8 +6,11 @@ import asyncio
 import functools
 import os
 import socket
-
+import sys
+import redis
+from datetime import datetime, timezone 
 import structlog
+
 
 from monitoring.models import (
     BaseMonitoringEvent,
@@ -15,7 +18,9 @@ from monitoring.models import (
     ScraperRunSummary,
     ExchangeCurrencyEvent,
     ScraperProcessResourceMetric,
-    ErrorDetails 
+    DBWorkerHeartbeatEvent,
+    DBWorkerBatchFlushEvent,
+    ErrorDetails,
 )
 
 LOG_DIR = "logs"
@@ -47,11 +52,14 @@ PROCESSORS_PRE_RENDER = [
     add_host_id, # Custom processor to add Host ID
     structlog.processors.StackInfoRenderer(), # Adds stack info for errors
     structlog.processors.format_exc_info, # Adds exception information to the log
-    structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+    # structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
 ]
 
 structlog.configure(
-    processors=PROCESSORS_PRE_RENDER,
+    processors=[
+        *PROCESSORS_PRE_RENDER,
+        structlog.stdlib.ProcessorFormatter.wrap_for_formatter
+        ],
     logger_factory=structlog.stdlib.LoggerFactory(),
     wrapper_class=structlog.stdlib.BoundLogger,
     cache_logger_on_first_use=True,
@@ -72,6 +80,10 @@ def setup_file_logger(name: str, filename: str, level=logging.INFO):
     # Clear previous handlers to prevent duplicates if the function is called multiple times
     std_logger.handlers = []
 
+    # Prevent logs from this specific logger from propagating to parent loggers
+    std_logger.propagate = False 
+
+         
     # 2. Create a formatter that will work with structlog
     # We will use structlog's JSONRenderer so that logs are in JSON format in the file.
     # The foreign_pre_chain ensures that global structlog processors are applied.
@@ -87,13 +99,46 @@ def setup_file_logger(name: str, filename: str, level=logging.INFO):
         backupCount=5                    # Keep 5 old backup files
     )
     file_handler.setFormatter(file_formatter) # Set the formatter for the handler
+    file_handler.setLevel(level)
+   
     std_logger.addHandler(file_handler) # Add the handler to the standard logger
+    # file_handler.flush()
 
     # 4. Return a structlog logger instance linked to the standard logger we configured.
     # This is the logger you will use in your code.
     return structlog.get_logger(name)
 
+# ---  Setup a general logger for console output and a general log file ---
+# 1 structlog-compatible formatter for the general log file
+general_file_formatter = structlog.stdlib.ProcessorFormatter(
+    processor=structlog.processors.JSONRenderer(),
+    foreign_pre_chain=PROCESSORS_PRE_RENDER,
+)
+# 2. Create a RotatingFileHandler for general logs
+general_file_handler = logging.handlers.RotatingFileHandler(
+    os.path.join(LOG_DIR, "general_scraper.log"),
+    maxBytes=10 * 1024 * 1024,
+    backupCount=5
+)
 
+general_file_handler.setFormatter(general_file_formatter)
+
+# 3. Create a structlog-compatible formatter for console output
+console_formatter = structlog.stdlib.ProcessorFormatter(
+    processor=structlog.dev.ConsoleRenderer(),
+    foreign_pre_chain=PROCESSORS_PRE_RENDER,
+)
+
+# 4. Create a StreamHandler for console output
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setFormatter(console_formatter)
+
+# 5. Get the root logger and add the new handlers
+
+root_logger = logging.getLogger()
+root_logger.addHandler(general_file_handler)
+root_logger.addHandler(console_handler) # הוסף גם את handler הקונסול
+root_logger.setLevel(logging.INFO) # הגדר את רמת הלוג המינימלית ל-INFO
 
 # Create specific loggers for each log type
 # ... (Rest of the code for specific logger definitions) ...
@@ -114,6 +159,12 @@ exchange_scrape_report_logger = setup_file_logger(
 scraper_resource_logger = setup_file_logger(
     "scraper.resources", "scraper_resources.log", level=logging.INFO
     ) # For resource metrics
+db_heartbeat_logger = setup_file_logger(
+    "db_worker.heartbeat", "db_heartbeat.log", level=logging.INFO
+)
+db_flush_events_logger = setup_file_logger(
+    "db_worker.flush_events", "db_flush_events.log", level=logging.INFO
+)
 
 # --- 2. Helper function for sending metrics/logs ---
 
@@ -131,6 +182,10 @@ def send_metric_log(model_instance: BaseMonitoringEvent):
         logger_instance = scraper_events_logger
     elif isinstance(model_instance, ScraperProcessResourceMetric):
         logger_instance = scraper_resource_logger
+    elif isinstance(model_instance, DBWorkerHeartbeatEvent):
+        logger_instance = db_heartbeat_logger
+    elif isinstance(model_instance, DBWorkerBatchFlushEvent):
+        logger_instance = db_flush_events_logger
     else:
         # Log an error if an unknown model is received
         structlog.get_logger("monitoring.utils").error(
@@ -144,6 +199,7 @@ def send_metric_log(model_instance: BaseMonitoringEvent):
     # Pydantic's .model_dump() converts the object to a Python dictionary.
     # structlog will handle the rest of the additions (like timestamp, host_id) and JSON rendering.
     logger_instance.info("Monitoring Event", **model_instance.model_dump(mode='json'))
+    # logger_instance.handlers[0].flush()
 
 
 # --- 3. Asynchronous decorators for monitoring ---
@@ -219,7 +275,7 @@ def handle_async_errors(component_name: str, is_critical: bool = False):
 
 # --- 4. Function for collecting and sending resource metrics (scraper) ---
 # We will use this only when we implement resource monitoring.
-async def start_scraper_resource_monitoring(pid: int, interval_seconds: int = 10):
+async def start_scraper_resource_monitoring(pid: int,interval_seconds: int = 10):
     """
     Starts an asynchronous task for monitoring scraper process resources.
     """
@@ -227,3 +283,41 @@ async def start_scraper_resource_monitoring(pid: int, interval_seconds: int = 10
     # For now, we'll put a placeholder here so it doesn't break the file
     scraper_resource_logger.info("Resource monitoring function placeholder called for pid", pid=pid)
     await asyncio.sleep(0.1) # To allow the asynchronous loop to continue
+
+
+async def send_heartbeat(redis_client: redis.Redis,data_buffer: dict,last_flush_time:dict, interval_seconds: int = 60,logger: structlog.stdlib.BoundLogger =db_heartbeat_logger):
+    """
+    Periodically sends a DBWorkerHeartbeatEvent to confirm the worker's operational status.
+    """
+    logger.info(f"DB Worker Heartbeat task started (interval: {interval_seconds}s).")
+    while True:
+        await asyncio.sleep(interval_seconds) # Wait for the specified interval
+        
+        total_buffered_items = sum(len(lst) for lst in data_buffer.values())
+        current_queue_length = -1 # Default to -1 in case of Redis connection issues
+        redis_error_details = None
+        try:
+            # Attempt to get Redis queue length
+            current_queue_length = await redis_client.llen("order_book_updates")
+        except Exception as e:
+            logger.info(f"Warning: Could not get Redis queue length for heartbeat: {e}")
+            redis_error_details = ErrorDetails(
+                error_code=type(e).__name__,
+                error_message=f"Failed to get Redis queue length: {str(e)}",
+                is_critical=False
+            )
+        
+        status = "alive"
+        if redis_error_details:
+             status = "degraded" # Example: mark as degraded if Redis queue length fails
+
+        # Send the heartbeat metric
+        model_instance = DBWorkerHeartbeatEvent(
+                status=status, # You could add more sophisticated logic for "healthy" or "degraded"
+                current_queue_length=current_queue_length,
+                buffered_items_count=total_buffered_items,
+                last_flush_time_global=max(last_flush_time.values(), default=None) if last_flush_time else None,
+                error_details=redis_error_details
+            )
+        send_metric_log(model_instance)
+        logger.info("DB Worker Heartbeat sent.")

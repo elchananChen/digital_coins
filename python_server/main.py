@@ -10,8 +10,6 @@ from exchanges.kraken import run_kraken_scraper
 from exchanges.by_bit import run_by_bit_scraper
 from exchanges.crypto_dot_com import run_crypto_scraper
 from exchanges.bit_stamp import run_bit_stamp_scraper
-from exchanges.bitstamp_v2 import run_bit_stamp_scraper_v2
-from exchanges.bit_stamp_redis import run_bit_stamp_scraper_redis
 
 # decorators and monitoring functions
 from monitoring.utils import time_async_function, scraper_run_summary_logger,handle_async_errors
@@ -29,10 +27,10 @@ logger = logging.getLogger(__name__)
 
 run_id = str(uuid.uuid4())
 # run duration for dev (for production put "inf" or remove the "stop_task")
-duration = 30
+duration = 60
 
 # delay to each task for soft initialization 
-delay_per_task = 0.5
+delay_per_task =0.5
 
 event = asyncio.Event()
 exchanges = [
@@ -58,7 +56,7 @@ exchanges = [
     # },
     {
         "name": "bitStamp",
-        "fn": run_bit_stamp_scraper_redis,
+        "fn": run_bit_stamp_scraper,
         # "fn": run_bit_stamp_scraper_v2,
         "headless": True,
     },
@@ -115,7 +113,17 @@ async def main(event:asyncio.Event,run_id:str):
           
             stop_task = asyncio.create_task(stop_event(event=event))       
 
-            results = await asyncio.gather(stop_task,*tasks,return_exceptions=True)
+            results = await asyncio.gather(*tasks,return_exceptions=True)
+
+            #  stop the stop task if not finished
+            if not stop_task.done():
+                stop_task.cancel()
+                try:
+                    # wait for the stop_task.cancel() to fullfil
+                    await stop_task
+                except asyncio.CancelledError:
+                    pass 
+
             run_summary_data = await aggregate_scraper_results(
                 all_exchange_results=results,                                       
                 total_exchanges_configured= len(exchanges),
@@ -124,7 +132,6 @@ async def main(event:asyncio.Event,run_id:str):
                 )
             return ScraperRunSummary(**run_summary_data)
         except KeyboardInterrupt as e:
-
             logger.info("🛑 Graceful shutdown completed")
             run_summary_data = await aggregate_scraper_results(
                 all_exchange_results=results,
@@ -136,7 +143,6 @@ async def main(event:asyncio.Event,run_id:str):
 
             return ScraperRunSummary(**run_summary_data)
         except Exception as e:
-
             logger.error(f"Fatal error during gather: {e}")
             run_summary_data = await aggregate_scraper_results(
                 all_exchange_results=results,
