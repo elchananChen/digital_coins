@@ -45,18 +45,17 @@ async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,red
     currency_id=str(uuid.uuid4())
     local_send_to_redis = 0
     local_errors_summary = {}
+    final_status = "failure" # Assume failure until proven otherwise
     page = None
+
+    # for ExchangeCurrencyEvent
+    initial_latency_ms = None
+    latency_avg_ms = 0.0
 
     #  for retry logic
     MAX_RETRIES = 3  
     RETRY_DELAY_SEC = 10
     
-    # --- Variables to pass state to finally block ---
-    final_status = "failure" # Assume failure until proven otherwise
-    
-    # variables for ExchangeCurrencyEvent
-    initial_latency_ms = None
-    latency_avg_ms = 0.0
     for attempt in range(MAX_RETRIES):    
         try:
             # initial variables
@@ -74,7 +73,6 @@ async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,red
                     order_books_string = ""
                     
                     async def process_data():
-    
                         try:         
                             nonlocal final_status               
                             nonlocal local_send_to_redis
@@ -93,6 +91,7 @@ async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,red
                                     is_empty_data_error=True
                                     )
                                 return
+                            
                             # logger.info(json_data["data"])
                             json_data_keys = ["asks","bids", "timestamp"]
                             for key in json_data_keys:
@@ -128,7 +127,13 @@ async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,red
         
                             data =  { "symbol": db_symbol,"exchange": exchange_name,"timestamp": timestamp , "bids": origin_bids,"asks": origin_asks }
                             data_as_string = json.dumps(data)
-                            res = await send_to_redis_queue(redis_client, data_as_string, db_symbol,exchange_name,error_summary=local_errors_summary)
+                            res = await send_to_redis_queue(
+                                redis_client, 
+                                data_as_string, 
+                                db_symbol,
+                                exchange_name,
+                                error_summary=local_errors_summary
+                                )
         
                             # for monitor
                             if res >= 1:
@@ -157,7 +162,7 @@ async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,red
     
                         now = time.perf_counter()
                         delay = now - last_save_time
-                        if delay >= 1:
+                        if delay >= 0.5:
                             if f'"channel":"order_book_{bit_stamp_symbol}"' in payload:
                                 # return if first payload because it empty
                                 if first_payload_for_channel:
@@ -185,21 +190,22 @@ async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,red
             start_time = time.perf_counter()
             # go to the page and the socket already work in the background
             await page.goto(f"https://www.bitstamp.net/trade/{bit_stamp_symbol}", wait_until="domcontentloaded")
-            logger.info(f"🫡 {bit_stamp_symbol} go to page")
+            logger.info(f"🫡 {db_symbol}@{exchange_name} go to page")
     
             # To run the function always (like while True - just more efficient)
             # stop when in the main.py event.set() will run (stop_task)
             await event.wait()
             break
-        
+
         except PlaywrightTimeoutError as e:
             # Make sure you've imported this: from playwright._impl._errors import TimeoutError as PlaywrightTimeoutError
-            logger.warning(f"⚠️ {db_symbol}: Navigation Timeout on attempt {attempt + 1}/{MAX_RETRIES}: {e}")
+            logger.warning(f"⚠️ {db_symbol}@{exchange_name}: Navigation Timeout on attempt {attempt + 1}/{MAX_RETRIES}: {e}")
         
-            # Call your function to log and categorize the error
+            # log and categorize the error
             is_page_created = True
             if page is None:
                 is_page_created = False
+            
             log_and_categorize_playwright_error(
                 e=e,
                 symbol=db_symbol,
@@ -211,9 +217,9 @@ async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,red
                 # Try to close the page if it was created (to prevent resource leaks)
                 try:
                     await page.close()
-                    logger.info(f"🔚 Closed timed-out page for {bit_stamp_symbol}")
+                    logger.info(f"🔚 Closed timed-out page for {db_symbol}@{exchange_name}")
                 except Exception as close_e:
-                    logger.error(f"❌ Error closing timed-out page for {bit_stamp_symbol}: {close_e}")
+                    logger.error(f"❌ Error closing timed-out page for {db_symbol}@{exchange_name}: {close_e}")
         
                 # Reset the page so a new one is created on the next attempt
                 page = None
@@ -233,7 +239,6 @@ async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,red
                     "status": final_status,
                 }
         
-
         except PlaywrightError as e:
             
             is_page_created = True
@@ -254,10 +259,10 @@ async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,red
                 break
             except PlaywrightError as ss_e:
                 await page.close()
-                logger.info(f"🔚 Closed page for {bit_stamp_symbol}")
+                logger.info(f"🔚 Closed page for {db_symbol}@{exchange_name}")
                 break
             except Exception as e:
-                logger.error(f"❌ Error closing page for {bit_stamp_symbol}: {e}")
+                logger.error(f"❌ Error closing page for {db_symbol}@{exchange_name}: {e}")
                 break
     
         except Exception as e:
@@ -267,9 +272,9 @@ async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,red
         finally:
             if page:
                 try:
-                    await page.close() # Always try to close the page if it was created
+                    await page.close() 
                     logger.info(f"🔚 Closed page for {bit_stamp_symbol}")
-                except Exception as e: # Catch errors specifically during page.close()
+                except Exception as e: 
                     logger.error(f"❌ Error closing page for {bit_stamp_symbol}: {e}")
             end_time = time.perf_counter()
             duration_ms = (end_time - start_time) * 1000
@@ -298,8 +303,8 @@ async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,red
             }
 
 
+# @handle_async_errors(component_name="scraper_run", is_critical=True)
 @time_async_function(component_name="scraper_run", event_name="exchange_scrape_duration")
-@handle_async_errors(component_name="scraper_run", is_critical=True)
 async def run_bit_stamp_scraper(context , redis_client,exchange_name,event,delay_per_task,run_id): 
     monitor_data = {
         "total_currency_pairs_configured": len(bit_stamp_symbols),
@@ -314,7 +319,6 @@ async def run_bit_stamp_scraper(context , redis_client,exchange_name,event,delay
     tasks = []
     results = []
     logger.info(f"Total symbols: {len(bit_stamp_symbols)}")
-
 
     # all coins running together in the same time
     #  but! initial the process after some time for each batch
@@ -338,9 +342,8 @@ async def run_bit_stamp_scraper(context , redis_client,exchange_name,event,delay
     except asyncio.exceptions.CancelledError:
         logger.info("❌ Scraper run was cancelled.")
  
-
     except Exception as e:
-        logger.error(f"🔴 Uncaught critical exception in run_bit_stamp_scraper_redis: {e}")
+        logger.error(f"🔴 Uncaught critical exception in run_bit_stamp_scraper: {e}")
 
     finally:
         for res in results:

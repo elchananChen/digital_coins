@@ -26,32 +26,32 @@ def log_and_categorize_playwright_error(e: PlaywrightError, symbol: str, error_s
         error_summary[error_type_key] = error_summary.get(error_type_key, 0) + 1
 
     if isinstance(e, PlaywrightTimeoutError): # This catch is for when TimeoutError is caught by PlaywrightError
-        logger.debug(f"❌ {symbol}: Navigation TimeoutError: {e}")
+        logger.error(f"❌ {symbol}: Navigation TimeoutError: {e}")
         _update_error_count("playwright_navigation_timeout")
     elif isinstance(e, TargetClosedError):
-        logger.debug(f"❌ {symbol}: Playwright TargetClosedError: Browser/Context/Page was closed during operation: {e}")
+        logger.error(f"❌ {symbol}: Playwright TargetClosedError: Browser/Context/Page was closed during operation: {e}")
         _update_error_count("playwright_target_closed")
     elif not page_created: # Error occurred before page was successfully created
-        logger.debug(f"❌ {symbol}: Playwright: Failed to open new page: {e}")
+        logger.error(f"❌ {symbol}: Playwright: Failed to open new page: {e}")
         _update_error_count("playwright_new_page_failed")
     elif "ERR_INVALID_URL" in error_message:
-        logger.debug(f"❌ {symbol}: Playwright: Invalid URL provided for navigation: {e}")
+        logger.error(f"❌ {symbol}: Playwright: Invalid URL provided for navigation: {e}")
         _update_error_count("playwright_invalid_url")
     elif "ERR_CERT" in error_message:
-        logger.debug(f"❌ {symbol}: Playwright: SSL Certificate error during navigation: {e}")
+        logger.error(f"❌ {symbol}: Playwright: SSL Certificate error during navigation: {e}")
         _update_error_count("playwright_ssl_cert_error")
     elif "net::ERR_INTERNET_DISCONNECTED" in error_message:
-        logger.debug(f"❌ {symbol}: Playwright: Internet disconnected during operation: {e}")
+        logger.error(f"❌ {symbol}: Playwright: Internet disconnected during operation: {e}")
         _update_error_count("playwright_internet_disconnected")
     else:
-        logger.debug(f"❌ {symbol}: Playwright: Other error during operation: {e}")
+        logger.error(f"❌ {symbol}: Playwright: Other error during operation: {e}")
         _update_error_count("playwright_general_op_failed")
 
 def log_general_exception(e: Exception, symbol: str, error_summary: dict):
     """
     Logs general Python exceptions and updates the error_summary dictionary.
     """
-    logger.debug(f"❌ {symbol}: Unexpected general error: {e}")
+    logger.error(f"❌ {symbol}: Unexpected general error: {e}")
     error_summary["general_scraper_exception"] = error_summary.get("general_scraper_exception", 0) + 1
 
 
@@ -89,7 +89,7 @@ def log_and_categorize_websocket_data_error(symbol: str,exchange:str, error_summ
         error_type_key = "websocket_data_validation_failed"
         detailed_error_message = f"WebSocket data validation failed: {error_message}"
 
-    logger.debug(f"❌ {symbol}@{exchange}: {error_type_key.replace('_', ' ').title()}: {detailed_error_message}")
+    logger.error(f"❌ {symbol}@{exchange}: {error_type_key.replace('_', ' ').title()}: {detailed_error_message}")
     _update_error_count(error_type_key)
     # traceback.print_exc() # Still useful for debugging internal processing errors
     return detailed_error_message
@@ -124,6 +124,6 @@ def log_and_categorize_redis_error(e: Exception, symbol: str,exchange:str, error
         error_type_key = "redis_readonly_error"
         detailed_error_message = f"Redis in read-only mode: {error_message}"
 
-    logger.debug(f"❌ {symbol}@{exchange}: {error_type_key.replace('_', ' ').title()}: {detailed_error_message}")
+    logger.error(f"❌ {symbol}@{exchange}: {error_type_key.replace('_', ' ').title()}: {detailed_error_message}")
     _update_error_count(error_type_key)
     return detailed_error_message

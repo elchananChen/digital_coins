@@ -3,6 +3,7 @@ import time
 import redis
 import asyncio
 import json 
+import os
 
 from datetime import datetime, timedelta
 from typing import List,Literal
@@ -15,14 +16,26 @@ from core import OrderBook # Assuming OrderBook is a Beanie document/Pydantic mo
 from core.db import init_db
 from core.redis import init_redis_client
 
-load_dotenv()
+from config import environment
 
 logger = logging.getLogger("db_worker")
 
+
+if environment == "test":
+    load_dotenv('.test.env', override=True)
+    REDIS_HOST = os.getenv('REDIS_HOST')
+    print(f"REDIS_HOST: {REDIS_HOST}")
+    print("Loaded environment variables from test.env for local testing.")
+else:
+    REDIS_HOST = os.getenv('REDIS_HOST')
+    print(f"REDIS_HOST: {REDIS_HOST}")
+    print("Running in non-local testing environment. Relying on existing environment variables.")
+
+
 # --- Batching and Flushing Configuration ---
-BATCH_SIZE = 50 # Number of documents to accumulate per key (exchange@symbol) before writing
-GLOBAL_BATCH_SIZE = 400 # Total number of documents across all keys to accumulate before a global flush
-FLUSH_INTERVAL = timedelta(milliseconds=200) # Maximum time to wait before writing (even if batch isn't full)
+BATCH_SIZE = 50 
+GLOBAL_BATCH_SIZE = 400 
+FLUSH_INTERVAL = timedelta(milliseconds=200) 
 
 # --- Data Buffers and Trackers ---
 

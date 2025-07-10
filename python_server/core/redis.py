@@ -1,6 +1,6 @@
 import redis
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 
 # for typing
@@ -10,16 +10,19 @@ import redis.asyncio as redis
 from utils import log_and_categorize_redis_error
 
 
-load_dotenv()
+# load_dotenv()
 
 async def init_redis_client():
     try:
-
-        # Redis
-        REDIS_HOST = os.getenv('REDIS_HOST', 'redis')
+        REDIS_HOST = os.getenv('REDIS_HOST')
         REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
         REDIS_DB = int(os.getenv('REDIS_DB', 0))
         REDIS_PASSWORD = os.getenv('REDIS_PASSWORD')
+        # # Redis
+        # REDIS_HOST = os.getenv('REDIS_HOST', 'redis')
+        # REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
+        # REDIS_DB = int(os.getenv('REDIS_DB', 0))
+        # REDIS_PASSWORD = os.getenv('REDIS_PASSWORD')
         
         redis_client = redis.Redis(
             host=REDIS_HOST,
@@ -30,9 +33,11 @@ async def init_redis_client():
         )
 
         await redis_client.ping()
+        print(f"REDIS_HOST: {REDIS_HOST}")
         print("Connected to Redis successfully.")
         return redis_client
     except Exception as e:
+        print(REDIS_HOST)
         print(f"Failed to connect to Redis: {e}")
         return None
 

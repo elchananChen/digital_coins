@@ -38,7 +38,11 @@ services:
     networks:
       - my-network
     volumes:
-      - ./logs:/app/logs # This line is critical
+      - ./logs:/app/logs
+      - ./debug_screenshots:/app/debug_screenshots
+    environment: # Add this block for environment variables
+      - PREBOOT_CHROME=true
+      - CONNECTION_TIMEOUT=300000 # 5 minutes in milliseconds
     depends_on:
       redis:
         condition: service_healthy # scraper_worker will wait until Redis is healthy

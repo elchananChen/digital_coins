@@ -112,6 +112,10 @@ class ScraperProcessResourceMetric(BaseMonitoringEvent):
         super().__init__(service_name="scraper", metric_type="process_resource_metric", **data)
 
 
+# ! ---------------  DB worker models -----------------
+
+
+# ------ Heartbeat ------
 class DBWorkerHeartbeatEvent(BaseMonitoringEvent):
     """
     Model for reporting the periodic heartbeat of the DB Worker.
@@ -126,6 +130,8 @@ class DBWorkerHeartbeatEvent(BaseMonitoringEvent):
     def __init__(self, **data: Any):
         super().__init__(service_name="db_worker", metric_type="heartbeat", **data)
 
+
+# ----- batch Flush ------
 class DBWorkerBatchFlushEvent(BaseMonitoringEvent):
     """
     Model for reporting on each individual batch flush operation to MongoDB.
@@ -142,6 +148,7 @@ class DBWorkerBatchFlushEvent(BaseMonitoringEvent):
     def __init__(self, **data: Any):
         super().__init__(service_name="db_worker", metric_type="batch_flush", **data)
 
+# ----- Queue event -----
 class DBWorkerQueueEvent(BaseMonitoringEvent):
     """
     Model for logging events related to the Redis queue processing.

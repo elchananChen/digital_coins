@@ -91,6 +91,7 @@ async def aggregate_scraper_results(
             overall_errors_summary.update(result.errors_summary)
 
         elif isinstance(result, Exception):
+            print(f"ERROR: Unexpected result type in aggregate_scraper_results! Result: {result}, Type: {type(result)}")
             # This indicates a critical failure where the scraper task itself crashed
             fully_failed_exchange_scrapes_count += 1
             logger.critical(f"🔥 CRITICAL: An exchange scraper task crashed due to unhandled exception: {type(result).__name__}: {result}")
