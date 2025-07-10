@@ -93,23 +93,23 @@ exchanges = [
             },
         "use_stealth": True
     },
-    {
-        "name": "bitStamp",
-        "fn": run_bit_stamp_scraper,
-        # "fn": run_bit_stamp_scraper_v2,
-        "headless": True,
-        "browser_args": [
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-gpu",
-            "--disabl"
-            ],
-        "context_options": {
-            "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            "viewport": {"width": 1920, "height": 1080}, # standard resolution
-            "is_mobile": False,
-            }
-    },
+#     {
+#         "name": "bitStamp",
+#         "fn": run_bit_stamp_scraper,
+#         # "fn": run_bit_stamp_scraper_v2,
+#         "headless": True,
+#         "browser_args": [
+#             "--no-sandbox",
+#             "--disable-setuid-sandbox",
+#             "--disable-gpu",
+#             "--disabl"
+#             ],
+#         "context_options": {
+#             "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+#             "viewport": {"width": 1920, "height": 1080}, # standard resolution
+#             "is_mobile": False,
+#             }
+#     },
 ]
 
 # monitoring initializations

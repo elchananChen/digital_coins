@@ -1,5 +1,6 @@
 .env
-test.env
+
+.test.env
 .vscode/
 
 __pycache__/
