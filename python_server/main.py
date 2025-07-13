@@ -32,11 +32,11 @@ from config import environment
 logger = logging.getLogger(__name__)
 
 
-if environment == "test":
-    load_dotenv('.test.env', override=True)
+if environment == "dev":
+    load_dotenv('.dev.env', override=True)
     REDIS_HOST = os.getenv('REDIS_HOST')
     print(f"REDIS_HOST: {REDIS_HOST}")
-    print("Loaded environment variables from test.env for local testing.")
+    print("Loaded environment variables from .dev.env for local testing.")
 else:
     REDIS_HOST = os.getenv('REDIS_HOST')
     print(f"REDIS_HOST: {REDIS_HOST}")
@@ -45,10 +45,10 @@ else:
 
 run_id = str(uuid.uuid4())
 # run duration for dev (for production put "inf" or remove the "stop_task")
-duration = 60
+duration = 90
 
 # delay to each task for soft initialization 
-delay_per_task =0.5
+delay_per_task =0.2
 
 event = asyncio.Event()
 exchanges = [

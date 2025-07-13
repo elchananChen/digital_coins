@@ -28,17 +28,13 @@ heavy process - need a strong cpu !
 ├── [X] 📄 **init**.py
 └── [X] 📄 scraping_utils.py
 
-# run the scraper:
+# run scraper:
 
 poetry run python main.py
 
-# run the db_worker:
+# run db_worker:
 
 poetry run python db_worker.py
-
-# run the monitor graph:
-
-poetry run python graphs/monitor_graph.py
 
 # docker
 

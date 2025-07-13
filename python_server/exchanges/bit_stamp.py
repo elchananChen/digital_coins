@@ -68,6 +68,8 @@ async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,red
     
             #   socket definition
             def on_websocket(ws):
+                    nonlocal last_save_time
+                    logger.info(f"{db_symbol} {exchange_name}on websocket")
                     # for catching the payload
                     # will be overwrite every half a second 
                     order_books_string = ""
@@ -147,8 +149,11 @@ async def get_bit_stamp_coin_order_book(bit_stamp_symbol, db_symbol, context,red
                                 error_summary=local_errors_summary,
                                 )
     
+             
                     # every time the data come - will be assign to current time
                     # for control of the data processing timing without interrupt the frame listening process.
+                    last_save_time = 0
+
                     async def on_frame_received(payload: str):
                         nonlocal first_payload_for_channel
                         nonlocal order_books_string 

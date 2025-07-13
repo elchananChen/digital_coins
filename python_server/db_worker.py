@@ -21,11 +21,11 @@ from config import environment
 logger = logging.getLogger("db_worker")
 
 
-if environment == "test":
-    load_dotenv('.test.env', override=True)
+if environment == "dev":
+    load_dotenv('.dev.env', override=True)
     REDIS_HOST = os.getenv('REDIS_HOST')
     print(f"REDIS_HOST: {REDIS_HOST}")
-    print("Loaded environment variables from test.env for local testing.")
+    print("Loaded environment variables from .dev.env for local testing.")
 else:
     REDIS_HOST = os.getenv('REDIS_HOST')
     print(f"REDIS_HOST: {REDIS_HOST}")

@@ -23,14 +23,6 @@ from lists.by_bit_lists import by_bit_symbols
 
 logger = logging.getLogger(__name__)
 
-# by_bit_symbols = {
-#     "BTCUSDT":"BTC/USDT", 
-#     "ETHUSDT":"ETH/USDT", 
-#     "LTCUSDT":"LTC/USDT", 
-#     "XRPUSDT":"XRP/USDT", 
-#     "BCHUSDT":"BCH/USDT", 
-# }
-
 
 async def get_by_bit_coin_order_book(by_bit_symbol, db_symbol, context,exchange_name:str,redis_client,event:asyncio.Event,sleep_time=0,run_id=None):
     currency_id=str(uuid.uuid4())
@@ -54,27 +46,29 @@ async def get_by_bit_coin_order_book(by_bit_symbol, db_symbol, context,exchange_
             first_payload_for_channel = True
             last_save_time = None
             start_time = time.perf_counter()
-    
+
             # initial page
             page = await context.new_page()
             def on_websocket(ws):
-                    logger.info("on websocket")
+                    nonlocal last_save_time
+                    logger.info(f"{db_symbol} {exchange_name} on websocket")
                      # for catching the payload
                     # will be overwrite every half a second
                     order_books_string = ""
 
                     async def process_data():
-                        logger.info("process data")
+                        # logger.info("process data")
                         try:
                             nonlocal final_status
                             nonlocal order_books_string
                             nonlocal local_errors_summary
+                            nonlocal local_send_to_redis
                             # print(f"Processing {len(order_books_string)} items")
         
                             # Convert to json
                             json_data = json.loads(order_books_string)
-        
-                            if "data" not in json_data or not isinstance("data",list):
+
+                            if "data" not in json_data or not isinstance(json_data["data"],list):
                                 log_and_categorize_websocket_data_error(
                                     e=ValueError("Received empty data payload"),
                                     symbol=db_symbol,
@@ -135,6 +129,7 @@ async def get_by_bit_coin_order_book(by_bit_symbol, db_symbol, context,exchange_
                             # for monitor
                             if res >= 1:
                                 final_status = "success"
+                                # logger.info(f"{db_symbol}@{exchange_name} send to redis")
                             local_send_to_redis += res # res = 1 / 0
                         except Exception as e:
                             log_and_categorize_websocket_data_error(
@@ -164,7 +159,7 @@ async def get_by_bit_coin_order_book(by_bit_symbol, db_symbol, context,exchange_
 
                         if delay >= 0.5:
                             if '"topic":"mergedDepth"' in payload:
-                                print(payload)
+                                # print(payload)
                                 # return if first payload because it empty
                                 if first_payload_for_channel:
                                     first_payload_for_channel = False
@@ -192,16 +187,17 @@ async def get_by_bit_coin_order_book(by_bit_symbol, db_symbol, context,exchange_
 
             await page.goto(f"https://www.bybit.com/en/trade/spot/{by_bit_symbol}", wait_until="domcontentloaded")
             logger.info(f"🫡 {db_symbol}@{exchange_name} go to page")
-    
+
            # To run the function always (like while True - just more efficient)
             # stop when in the main.py event.set() will run (stop_task)
             await event.wait()
             break
 
         except PlaywrightTimeoutError as e:
+            print("PlaywrightTimeoutError")
             # Make sure you've imported this: from playwright._impl._errors import TimeoutError as PlaywrightTimeoutError
             logger.warning(f"⚠️ {db_symbol}@{exchange_name}: Navigation Timeout on attempt {attempt + 1}/{MAX_RETRIES}: {e}")
-        
+
             # log and categorize the error
             is_page_created = True
             if page is None:
@@ -241,6 +237,7 @@ async def get_by_bit_coin_order_book(by_bit_symbol, db_symbol, context,exchange_
                 }
         
         except PlaywrightError as e:
+            print("PlaywrightError")
             is_page_created = True
             if page is None:
                 is_page_created = False
@@ -266,6 +263,7 @@ async def get_by_bit_coin_order_book(by_bit_symbol, db_symbol, context,exchange_
                 break
     
         except Exception as e:
+            print("Exception")
             log_general_exception(e=e,symbol=db_symbol, error_summary=local_errors_summary)
             break
 

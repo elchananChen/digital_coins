@@ -1,2 +1,2 @@
-environment = "test"
+environment = "dev"
 # environment = "production"
