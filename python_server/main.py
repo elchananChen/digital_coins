@@ -42,7 +42,7 @@ else:
     print(f"REDIS_HOST: {REDIS_HOST}")
     print("Running in non-local testing environment. Relying on existing environment variables.")
 
-
+print("test")
 run_id = str(uuid.uuid4())
 # run duration for dev (for production put "inf" or remove the "stop_task")
 duration = 90
