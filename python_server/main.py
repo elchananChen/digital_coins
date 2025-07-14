@@ -5,9 +5,6 @@ import uuid
 
 from core import init_redis_client 
 
-
-from exchanges.by_bit import run_by_bit_scraper
-
 from exchanges.bit_stamp import run_bit_stamp_scraper
 
 # decorators and monitoring functions
