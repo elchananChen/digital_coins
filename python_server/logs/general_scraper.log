@@ -1,0 +1,94 @@
+{"event": "DB Worker Heartbeat task started (interval: 30s).", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:05:48.489937Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:06:18.495064Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:06:48.507166Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:07:18.523065Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:07:48.531102Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:08:18.543458Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:08:48.560305Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:09:18.580862Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:09:48.595173Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:10:18.606996Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:10:48.615842Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:11:18.624724Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:11:48.630728Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:12:18.640089Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:12:48.649229Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:13:18.659066Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:13:48.671467Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:14:18.677688Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:14:48.690783Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:15:18.701919Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:15:48.712241Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:16:18.723411Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:16:48.731744Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:17:18.746348Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:17:48.754333Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:18:18.767434Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:18:48.783014Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:19:18.792486Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:19:48.801980Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat sent.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:20:18.812331Z", "host_id": "04c76c85562a"}
+{"event": "DB Worker Heartbeat task started (interval: 30s).", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:20:42.013797Z", "host_id": "f335511ff602"}
+{"event": "DB Worker Heartbeat task started (interval: 30s).", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:25:36.557079Z", "host_id": "eeace899b267"}
+{"event": "DB Worker Heartbeat task started (interval: 30s).", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T10:32:11.656384Z", "host_id": "eeace899b267"}
+{"event": "Total symbols: 13", "logger": "exchanges.bit_stamp", "level": "info", "timestamp": "2025-07-14T11:10:54.196232Z", "host_id": "b78f13ec52d6"}
+{"event": "DB Worker Heartbeat task started (interval: 30s).", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:10:56.734807Z", "host_id": "7ca4df09c0de"}
+{"event": "\ud83e\udee1 BTCUSD@bitStamp go to page", "logger": "exchanges.bit_stamp", "level": "info", "timestamp": "2025-07-14T11:10:59.190878Z", "host_id": "b78f13ec52d6"}
+{"event": "BTCUSD bitStampon websocket", "logger": "exchanges.bit_stamp", "level": "info", "timestamp": "2025-07-14T11:11:00.756125Z", "host_id": "b78f13ec52d6"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:02.001974Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:02.317805Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:02.932016Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:03.545877Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:04.153875Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:04.693944Z", "host_id": "7ca4df09c0de"}
+{"event": "\ud83e\udee1 ETHUSD@bitStamp go to page", "logger": "exchanges.bit_stamp", "level": "info", "timestamp": "2025-07-14T11:11:05.408125Z", "host_id": "b78f13ec52d6"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:05.418225Z", "host_id": "7ca4df09c0de"}
+{"event": "ETHUSD bitStampon websocket", "logger": "exchanges.bit_stamp", "level": "info", "timestamp": "2025-07-14T11:11:05.783678Z", "host_id": "b78f13ec52d6"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:05.933614Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:06.553557Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:07.068126Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:07.376066Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:07.691970Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:08.682687Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 2 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:09.018174Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 2 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:09.029917Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:09.334074Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:09.658083Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:09.978062Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:10.298196Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:10.620006Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:10.950591Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:11.258227Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:11.259012Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:11.669774Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:11.973943Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:12.286414Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:12.585692Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:12.999042Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:13.305967Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:13.609867Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:13.913941Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:14.231960Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:14.549970Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:14.866611Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:15.186006Z", "host_id": "7ca4df09c0de"}
+{"event": "\ud83e\udee1 LTCUSD@bitStamp go to page", "logger": "exchanges.bit_stamp", "level": "info", "timestamp": "2025-07-14T11:11:15.273903Z", "host_id": "b78f13ec52d6"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:15.497658Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:15.499205Z", "host_id": "7ca4df09c0de"}
+{"event": "LTCUSD bitStampon websocket", "logger": "exchanges.bit_stamp", "level": "info", "timestamp": "2025-07-14T11:11:15.681583Z", "host_id": "b78f13ec52d6"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:15.901637Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:16.201528Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:16.503943Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:16.810881Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for LTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:17.141990Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:17.143021Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:17.459919Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for LTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:17.772161Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:17.773141Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:18.110155Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for LTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:18.113491Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:18.424060Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:18.724315Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for LTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:18.725134Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for BTCUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:19.049512Z", "host_id": "7ca4df09c0de"}
+{"event": "Flushed 1 documents for ETHUSD@bitStamp to MongoDB.", "logger": "db_worker", "level": "info", "timestamp": "2025-07-14T11:11:19.354631Z", "host_id": "7ca4df09c0de"}

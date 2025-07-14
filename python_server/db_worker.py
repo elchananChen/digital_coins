@@ -7,7 +7,6 @@ import os
 
 from datetime import datetime, timedelta
 from typing import List,Literal
-from dotenv import load_dotenv
 
 from monitoring.models import ErrorDetails, DBWorkerBatchFlushEvent
 from monitoring.utils import send_metric_log,send_heartbeat
@@ -16,20 +15,7 @@ from core import OrderBook # Assuming OrderBook is a Beanie document/Pydantic mo
 from core.db import init_db
 from core.redis import init_redis_client
 
-from config import environment
-
 logger = logging.getLogger("db_worker")
-
-
-if environment == "dev":
-    load_dotenv('.dev.env', override=True)
-    REDIS_HOST = os.getenv('REDIS_HOST')
-    print(f"REDIS_HOST: {REDIS_HOST}")
-    print("Loaded environment variables from .dev.env for local testing.")
-else:
-    REDIS_HOST = os.getenv('REDIS_HOST')
-    print(f"REDIS_HOST: {REDIS_HOST}")
-    print("Running in non-local testing environment. Relying on existing environment variables.")
 
 
 # --- Batching and Flushing Configuration ---
@@ -45,8 +31,8 @@ insert_tracker = {}
 
 # Buffer for accumulating data before writing to MongoDB
 # Uses a regular dictionary to manage last_flush_time per key
-data_buffer = {} 
-last_flush_time = {} # Stores the last time data was flushed for a specific key
+data_buffer = {}
+last_flush_time = {}
 
 
 def update_insert_tracker(tracker: dict, key: str, insert_number: int, insert_time: int):
@@ -227,10 +213,10 @@ async def periodic_time_flush(redis_client: redis.Redis):
 
         except asyncio.CancelledError:
             logger.info("Periodic time flush task cancelled.")
-            break # Exit the loop cleanly if the task is cancelled
+            break 
         except Exception as e:
             logger.error(f"Error in periodic_time_flush: {e}")
-            await asyncio.sleep(1) # Prevent a tight loop on error
+            await asyncio.sleep(1)
 
 
 async def main():
@@ -287,7 +273,10 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        logger.info(insert_tracker) # Print the tracker on manual shutdown
+        logger.info(f"insert_tracker dict: {insert_tracker}")
         logger.info("DB Worker stopped by user.")
     except asyncio.CancelledError:
         logger.info("DB Worker task cancelled.")
+    except Exception as e:
+        logger.info(f"global db_worker error {e}")
+        logger.info(f"insert_tracker dict: {insert_tracker}")

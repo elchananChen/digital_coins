@@ -7,7 +7,6 @@ COPY pyproject.toml poetry.lock ./
 
 RUN pip install poetry
 
-# Poetry יותקן את התלויות שכבר בפנים
 RUN poetry install --no-root
 
 COPY . .
