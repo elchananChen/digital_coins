@@ -25,11 +25,11 @@ from utils import aggregate_scraper_results
 logger = logging.getLogger(__name__)
 
 run_id = str(uuid.uuid4())
-# run duration for dev (for production put "inf" or remove the "stop_task")
-duration = 90
+
+
 
 # delay to each task for soft initialization 
-delay_per_task =10
+delay_per_task =1
 
 event = asyncio.Event()
 exchanges = [

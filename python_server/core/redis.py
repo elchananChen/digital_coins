@@ -1,10 +1,11 @@
 import redis
 import os
+import logging
 
 import redis.asyncio as redis
 
 from utils import log_and_categorize_redis_error
-
+logger = logging.getLogger(__name__)
 
 async def init_redis_client():
     try:
@@ -32,6 +33,7 @@ async def init_redis_client():
 
 async def send_to_redis_queue(redis_client: redis.Redis, json_data: str,symbol:str, exchange_name, error_summary:dict):
     try:
+        logger.info(json_data)
         await redis_client.rpush("order_book_updates", json_data)
         return 1
     except Exception as e:

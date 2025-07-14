@@ -65,7 +65,6 @@ bit_stamp_symbols = {
     "XDCUSD": "xdcusd",      # XDC Network
     
     # Meme Coins 10
-
     "PEPEUSD": "pepeusd",    # Pepe
     "BONKUSD": "bonkusd",    # Bonk
     "WIFUSD": "wifusd",      # dogwifhat
