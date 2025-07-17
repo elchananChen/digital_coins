@@ -11,7 +11,7 @@ def merge_addition_dicts(dict1:dict,dict2:dict):
     return dict(counter1 + counter2)
 
 
-def add_overall_exchange_status(monitor_data:dict ):
+def add_overall_exchange_status(monitor_data:dict):
         failures = monitor_data["failed_currency_pair_initializations"]
         total_currencies = monitor_data["currency_pair_initialized"]
 
@@ -20,10 +20,6 @@ def add_overall_exchange_status(monitor_data:dict ):
         for error_value in monitor_data["errors_summary"].values(): 
             if isinstance(error_value, int):
                 errors_sum += error_value
-        logger.warning(f"errors_sum {errors_sum}")
-        logger.warning(f"failures {failures}")
-        logger.warning(f"total_currencies {total_currencies}")
-
         # status logic
         if errors_sum == 0 and failures == 0:
             monitor_data["overall_exchange_status"] = "success" 
