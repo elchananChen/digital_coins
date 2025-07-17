@@ -24,7 +24,13 @@ class ExchangeScrapeReport(BaseModel):
     """
     run_id: str
     exchange_name: str = Field(..., description="Name of the exchange (e.g., 'Bitstamp', 'Binance').")
-    overall_exchange_status: str = Field(..., description="Overall status of this specific exchange's scrape (e.g., 'fully_successful', 'partial_success', 'fully_failed').")
+    overall_exchange_status: Literal[
+        "success", 
+        "success_with_errors", 
+        "partial", 
+        "failed"
+        ] = Field(..., 
+                  description="Overall status of this specific exchange's scrape (e.g., 'fully_successful', 'partial_success', 'fully_failed').")
 
     total_currency_pairs_configured: int = Field(..., description="Total currency pairs configured for this specific exchange.")
     successful_currency_pair_initializations: int = Field(..., description="Number of pairs that successfully started scraping for this exchange.")
@@ -41,7 +47,7 @@ class ScraperRunSummary(BaseMonitoringEvent):
     """
 
     run_id: str = Field(..., description="Unique ID for this specific scraper run instance.")
-    close_status: CloseStatusEnum = Field(..., description="Overall status of the scraper's main process termination.")
+    close_status: CloseStatusEnum | None = Field(None, description="Overall status of the scraper's main process termination.")
     total_run_duration_ms: float = Field(..., description="Total duration of the entire scraper run in milliseconds.")
 
     # --- Exchange-level Metrics ---
@@ -82,13 +88,15 @@ class ExchangeCurrencyEvent(BaseMonitoringEvent):
     event_name: str     # event name: data_sent_to_redis, page_load_success, etc.
     data_point_id: Optional[str] = None
     duration_ms: Optional[float] = None
-    latency_since_last_save_ms: Optional[float] = None
     initial_latency_ms: Optional[float] = None
     latency_avg_ms: Optional[float] = None
     points_send_to_redis: Optional[int] = None
     current_redis_queue_length: Optional[int] = None
     error_details: Dict[str, int] = Field(default_factory=dict, description="Summary of errors for this specific currency/exchanger pair.")
-    status: Optional[str] = None
+    status:  Literal[
+        "success",
+        "failed"
+        ] = None
 
     def __init__(self, **data: Any):
         super().__init__(service_name="scraper", metric_type="exchange_currency_event", **data)
@@ -110,7 +118,6 @@ class ScraperProcessResourceMetric(BaseMonitoringEvent):
 
     def __init__(self, **data: Any):
         super().__init__(service_name="scraper", metric_type="process_resource_metric", **data)
-
 
 # ! ---------------  DB worker models -----------------
 

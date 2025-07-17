@@ -1,39 +1,35 @@
 import asyncio
 import logging
 import uuid
-
-
+import psutil
+import os
 from core import init_redis_client 
 
-from exchanges.bit_stamp import run_bit_stamp_scraper
-
-# decorators and monitoring functions
-from monitoring.utils import time_async_function
-
 # pydantic models (classes)  
-from monitoring.models import ScraperRunSummary,CloseStatusEnum
+from monitoring.utils import monitoring_loop, generate_and_log_scrape_summaries
+from monitoring.global_metric_dicts import EXCHANGES_METRICS
 
 from patchright.async_api import async_playwright
 
+from exchanges.bit_stamp import run_bit_stamp_scraper
 
-from utils import aggregate_scraper_results
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
-run_id = str(uuid.uuid4())
-
+RUN_ID = str(uuid.uuid4())
+CURRENT_PROCESS = psutil.Process(os.getpid())
 
 
 # delay to each task for soft initialization 
-delay_per_task =1
+delay_per_task = 10
 
 event = asyncio.Event()
+
 exchanges = [
     {
         "name": "bitStamp",
         "fn": run_bit_stamp_scraper,
-        "headless": True,
         "browser_args": [
             "--no-sandbox",
             "--disable-setuid-sandbox",
@@ -48,75 +44,74 @@ exchanges = [
     },
 ]
 
+
 # Apply the decorators directly to the main function.
 # time_async_function will handle calculating duration and sending ScraperRunSummary.
 # handle_async_errors will catch unhandled exceptions in main and send an error log.
 # @handle_async_errors(component_name="Scraper Main Process", is_critical=True)
-@time_async_function(component_name="Scraper Main Process", event_name="Full Scraper Run")
 async def main(event:asyncio.Event,run_id:str):
+    logger.info("Scraper main process started")
     # connect to redis
     redis_client = await init_redis_client()
     if not redis_client:
-        print("Error: Could not connect to Redis. Exiting.")
+        logger.critical("Failed to connect to Redis. Exiting.")
         raise ConnectionError("Failed to connect to Redis.")
  
     async with async_playwright() as p:
-        global run_summary_data
+
+        # process monitor
+        asyncio.create_task(
+            monitoring_loop(
+                run_id=RUN_ID,
+                current_process=CURRENT_PROCESS,
+                interval_sec=60,
+                logger=logger
+                ))
+        
+        asyncio.create_task(
+            generate_and_log_scrape_summaries(
+                exchange_metrics=EXCHANGES_METRICS, 
+                interval_delay=60,
+                logger=logger
+                ))
+
         tasks =[]
-       
+
         for exchange in exchanges:
             # background browser
-            
-            if exchange["headless"] == True:
-                headless_browser = await p.chromium.launch(
-                    headless=True,
-                    args=exchange.get("browser_args", []),
-                    )
-                exchange_context =  await headless_browser.new_context(
-                   **exchange.get("context_options", {}),
+            headless_browser = await p.chromium.launch(
+                headless=True,
+                args=exchange.get("browser_args", []),
                 )
-            else:
-                browser = await p.chromium.launch(headless=False, args=["--start-maximized"])
-                exchange_context = await browser.new_context(no_viewport=True)
+            exchange_context =  await headless_browser.new_context(
+                **exchange.get("context_options", {}),
+            )
+            exchange_name = exchange["name"]
+            logger.info(f"Launching browser for {exchange_name}")
             
-            task = asyncio.create_task(exchange["fn"](exchange_context,redis_client,exchange_name=exchange["name"],event=event,delay_per_task=delay_per_task,run_id=run_id))
+            task = asyncio.create_task(
+                exchange["fn"](
+                    exchange_context,
+                    redis_client,
+                    exchange_name=exchange["name"],
+                    event=event,
+                    delay_per_task=delay_per_task,
+                    run_id=run_id
+                    ))
             tasks.append(task)
-        results = []
+
 
         try:
-            results = await asyncio.gather(*tasks,return_exceptions=True)
-
-            #  stop the stop task if not finished
-
-            run_summary_data = await aggregate_scraper_results(
-                all_exchange_results=results,
-                total_exchanges_configured= len(exchanges),
-                close_status=CloseStatusEnum.planned_shutdown,
-                run_id=run_id
-                )
-            return ScraperRunSummary(**run_summary_data)
+            logger.info(f"All scraper tasks created for {len(exchanges)} exchanges")
+            await asyncio.gather(*tasks,return_exceptions=True)
+            logger.info(f"Scraper tasks gathered successfully")
 
         except KeyboardInterrupt as e:
-            logger.info("🛑 Graceful shutdown completed")
-            run_summary_data = await aggregate_scraper_results(
-                all_exchange_results=results,
-                total_exchanges_configured= len(exchanges),
-                close_status=CloseStatusEnum.planned_shutdown,
-                run_id=run_id
-                )
+            logger.info(f"🛑 Graceful shutdown completed (run id: {run_id})")
 
-            return ScraperRunSummary(**run_summary_data)
 
         except Exception as e:
-            logger.error(f"Fatal error during gather: {e}")
-            run_summary_data = await aggregate_scraper_results(
-                all_exchange_results=results,
-                total_exchanges_configured= len(exchanges),
-                close_status=CloseStatusEnum.unplanned_shutdown,
-                run_id=run_id
-                )
-
-            return ScraperRunSummary(**run_summary_data)
+            logger.critical("Fatal error during task gathering \n Exception: {e}")
 
         finally:
             if redis_client:
@@ -125,8 +120,7 @@ async def main(event:asyncio.Event,run_id:str):
                     await redis_client.connection_pool.disconnect() 
                     logger.info("Redis connection closed.")
                 except Exception as e:
-                    logger.error(f"Error closing Redis connection: {e}")
-
+                    logger.error(f"Failed to close Redis connection \n Exception: {e}")
 
 if __name__ == "__main__":
-    asyncio.run(main(event,run_id))
+    asyncio.run(main(event,RUN_ID))

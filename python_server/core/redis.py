@@ -22,20 +22,19 @@ async def init_redis_client():
         )
 
         await redis_client.ping()
-        print(f"REDIS_HOST: {REDIS_HOST}")
-        print("Connected to Redis successfully.")
+        logger.info("Successfully connected to Redis")
         return redis_client
     except Exception as e:
-        print(REDIS_HOST)
-        print(f"Failed to connect to Redis: {e}")
+        logger.error(e)
+        logger.critical("Failed to connect to Redis. Exiting.")
         return None
 
 
 async def send_to_redis_queue(redis_client: redis.Redis, json_data: str,symbol:str, exchange_name, error_summary:dict):
     try:
-        logger.info(json_data)
         await redis_client.rpush("order_book_updates", json_data)
         return 1
     except Exception as e:
         log_and_categorize_redis_error(e=e,symbol=symbol,exchange=exchange_name,error_summary=error_summary)
         return 0
+

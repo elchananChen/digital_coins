@@ -3,7 +3,6 @@ import time
 import redis
 import asyncio
 import json 
-import os
 
 from datetime import datetime, timedelta
 from typing import List,Literal
@@ -11,7 +10,7 @@ from typing import List,Literal
 from monitoring.models import ErrorDetails, DBWorkerBatchFlushEvent
 from monitoring.utils import send_metric_log,send_heartbeat
 
-from core import OrderBook # Assuming OrderBook is a Beanie document/Pydantic model
+from core import OrderBook
 from core.db import init_db
 from core.redis import init_redis_client
 

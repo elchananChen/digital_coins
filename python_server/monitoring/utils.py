@@ -8,9 +8,12 @@ import os
 import socket
 import sys
 import redis
-from datetime import datetime, timezone 
 import structlog
+import psutil
+import uuid
+import copy
 
+from utils.util_functions import add_overall_exchange_status,merge_addition_dicts
 
 from monitoring.models import (
     BaseMonitoringEvent,
@@ -167,7 +170,6 @@ db_flush_events_logger = setup_file_logger(
 )
 
 # --- 2. Helper function for sending metrics/logs ---
-
 def send_metric_log(model_instance: BaseMonitoringEvent): 
     """
     Helper function for sending structured logs/metrics.
@@ -200,7 +202,6 @@ def send_metric_log(model_instance: BaseMonitoringEvent):
     # structlog will handle the rest of the additions (like timestamp, host_id) and JSON rendering.
     logger_instance.info("Monitoring Event", **model_instance.model_dump(mode='json'))
     # logger_instance.handlers[0].flush()
-
 
 # --- 3. Asynchronous decorators for monitoring ---
 def time_async_function(component_name: str, event_name: str):
@@ -240,7 +241,6 @@ def time_async_function(component_name: str, event_name: str):
         return wrapper
     return decorator
 
-
 def handle_async_errors(component_name: str, is_critical: bool = False):
     """
     Decorator for handling and sending errors from a coroutine as an ExchangeCurrencyEvent.
@@ -272,7 +272,6 @@ def handle_async_errors(component_name: str, is_critical: bool = False):
         return wrapper
     return decorator
 
-
 # --- 4. Function for collecting and sending resource metrics (scraper) ---
 # We will use this only when we implement resource monitoring.
 async def start_scraper_resource_monitoring(pid: int,interval_seconds: int = 10):
@@ -283,7 +282,6 @@ async def start_scraper_resource_monitoring(pid: int,interval_seconds: int = 10)
     # For now, we'll put a placeholder here so it doesn't break the file
     scraper_resource_logger.info("Resource monitoring function placeholder called for pid", pid=pid)
     await asyncio.sleep(0.1) # To allow the asynchronous loop to continue
-
 
 async def send_heartbeat(redis_client: redis.Redis,data_buffer: dict,last_flush_time:dict, interval_seconds: int = 60,logger: structlog.stdlib.BoundLogger =db_heartbeat_logger):
     """
@@ -321,3 +319,247 @@ async def send_heartbeat(redis_client: redis.Redis,data_buffer: dict,last_flush_
             )
         send_metric_log(model_instance)
         logger.info("DB Worker Heartbeat sent.")
+
+# ---  Process Resource Metrics Collection ---
+def get_process_resource_metrics(process: psutil.Process, run_id: str, logger:structlog.stdlib.BoundLogger) -> ScraperProcessResourceMetric:
+    """
+    Collects resource metrics for a given process and returns a ScraperProcessResourceMetric model.
+    """
+    try:
+        cpu_percent = process.cpu_percent(interval=None)
+        memory_info = process.memory_info()
+        memory_mb = memory_info.rss / (1024 * 1024)
+        open_fds = process.num_fds()
+        threads_count = process.num_threads()
+
+        browser_cpu_percent = None
+        browser_memory_mb = None
+
+        # Try to find Playwright browser process if available
+        # This part might need refinement based on how Playwright child processes are identifiable
+        for p in psutil.process_iter(['name', 'cpu_percent', 'memory_info']):
+            try:
+                p_name = p.info['name'].lower()
+                if 'chrome' in p_name or 'chromium' in p_name or 'msedge' in p_name:
+                    browser_cpu_percent = p.cpu_percent(interval=None)
+                    browser_memory_mb = p.memory_info().rss / (1024 * 1024)
+                    break
+            except (psutil.NoSuchProcess, psutil.AccessDenied, AttributeError):
+                continue
+        return ScraperProcessResourceMetric(
+            process_id=process.pid,
+            process_name=process.name(),
+            cpu_usage_percent=cpu_percent,
+            memory_usage_mb=memory_mb,
+            open_file_descriptors=open_fds,
+            threads_count=threads_count,
+            browser_process_cpu_percent=browser_cpu_percent,
+            browser_process_memory_mb=browser_memory_mb,
+            run_id=run_id,
+        )
+    except psutil.NoSuchProcess:
+        logger.warning("Attempted to get metrics for a non-existent process.", run_id=run_id, process_id=process.pid)
+        return None
+    except Exception as e:
+        logger.error("Failed to collect process resource metrics", exception=e, run_id=run_id, exc_info=True)
+        return None
+
+async def monitoring_loop(run_id: str,current_process,logger:structlog.stdlib.BoundLogger, interval_sec: int = 30,): 
+    """
+    Sends periodic process resource metrics.
+    """
+    logger.info("Starting process resource monitoring loop")
+    while True:
+        try:
+            # --- Send Process Resource Metrics ---
+            resource_metrics = get_process_resource_metrics(process=current_process, run_id=run_id,logger=logger)
+            if resource_metrics:
+                send_metric_log(resource_metrics)
+            logger.info(f"Process resource metrics sent (run id: {run_id})")
+
+        except Exception as e:
+            logger.error(f"Error in process resource monitoring loop \n Exception: {e}")
+        finally:
+            await asyncio.sleep(interval_sec)
+
+
+def add_run_summery_status(exchange_status,run_summery_status_dict):
+    if exchange_status == "success":
+        run_summery_status_dict["fully_successful_exchange_scrapes"] += 1
+    elif exchange_status == "success_with_errors":
+        run_summery_status_dict["fully_successful_with_errors_exchange_scrapes"] += 1
+    elif exchange_status == "partial":
+        run_summery_status_dict["partial_success_exchange_scrapes"] += 1
+    elif exchange_status == "failed":
+        run_summery_status_dict["fully_failed_exchange_scrapes"] += 1
+
+async def generate_and_log_scrape_summaries(exchange_metrics: dict, interval_delay,logger:structlog.stdlib.BoundLogger) -> None:
+    logger.info("generate_and_log_scrape_summaries started")
+    while True:
+        try:
+            start = time.perf_counter()
+            await asyncio.sleep(interval_delay)
+            # logger.info(exchange_metrics)
+            # Make copy 
+            metrics_snapshot = copy.deepcopy(exchange_metrics)
+
+            # Reset the global EXCHANGE_METRICS (he continue to collect data)
+            run_id = uuid.uuid4()
+            for exchange_name in exchange_metrics:
+                if exchange_name.startswith("_"):
+                    continue
+                exchange_metrics[exchange_name]["run_id"] = run_id 
+                exchange_metrics[exchange_name]["active_currency_pairs"] = set()
+                exchange_metrics[exchange_name]["total_currency_pairs_configured"] = len(exchange_metrics[exchange_name]["currency_metrics"])
+                exchange_metrics[exchange_name]["successful_currency_pair_initializations"] = 0
+                exchange_metrics[exchange_name]["failed_currency_pair_initializations"] = 0
+                exchange_metrics[exchange_name]["total_data_points_sent_to_redis"] = 0
+                exchange_metrics[exchange_name]["errors_summary"] = {}
+                exchange_metrics[exchange_name]["overall_exchange_status"] = ""
+                for currency_name, currency_data in exchange_metrics[exchange_name]["currency_metrics"].items():
+                        currency_data["data_point_id"] = str(uuid.uuid4())
+                        currency_data["latency_avg_ms"] = 0.0
+                        currency_data["points_send_to_redis"] = 0
+                        currency_data["duration_ms"]= 0
+                        currency_data["error_details"] = {}
+                        currency_data["status"] = "failed"
+                        currency_data["avg_volume_count"] = 0
+
+            exchange_metrics["_run_id"] = run_id
+
+            if not metrics_snapshot:
+                logger.critical("EXCHANGE_METRICS dict is empty")
+                continue
+            
+            session_run_id = metrics_snapshot["_run_id"]
+
+            total_exchanges_configured = len(metrics_snapshot) - 1
+
+            run_summery_status = {
+                "fully_successful_exchange_scrapes": 0,
+                "fully_successful_with_errors_exchange_scrapes": 0,
+                "partial_success_exchange_scrapes": 0,
+                "fully_failed_exchange_scrapes": 0,
+                }
+
+            total_currency_pairs_configured = 0
+
+            successful_currency_pair_initializations = 0
+            failed_currency_pair_initializations = 0
+            total_data_points_sent_to_redis = 0
+            aggregated_errors_summary = {}
+
+            # run on all exchanges 
+            for exchange_name, exchange_data in metrics_snapshot.items():
+
+                if exchange_name.startswith("_"):
+                    continue
+
+                # run on all currencies and add data to exchange summery and currency summery
+                # log currency summery
+                for currency_name, currency_data in exchange_data["currency_metrics"].items():
+                    if currency_data["points_send_to_redis"] > 0:
+                        exchange_data["successful_currency_pair_initializations"] +=  1
+                        exchange_data["total_data_points_sent_to_redis"] += currency_data["points_send_to_redis"]
+                        currency_data["status"] = "success"
+                    else:
+                        exchange_data["failed_currency_pair_initializations"] +=1
+                        currency_data["status"] = "failed"
+
+                    exchange_data["errors_summary"] = merge_addition_dicts(
+                        exchange_data["errors_summary"],
+                        currency_data["error_details"]
+                        )
+
+                    # send ExchangeCurrencyEvent
+                    send_metric_log(ExchangeCurrencyEvent(
+                        run_id = str(session_run_id),
+                        component_name = exchange_name,
+                        currency_pair = currency_name,
+                        event_name = "currency_summery",
+                        data_point_id = str(currency_data["data_point_id"]),
+                        initial_latency_ms = currency_data["initial_latency_ms"],
+                        latency_avg_ms = currency_data["latency_avg_ms"],
+                        points_send_to_redis = currency_data["points_send_to_redis"],
+                        error_details = currency_data["error_details"],
+                        status = currency_data["status"],
+                    ))
+                
+                aggregated_errors_summary = merge_addition_dicts(
+                aggregated_errors_summary,
+                exchange_data["errors_summary"]
+                )
+
+                add_overall_exchange_status(monitor_data=exchange_data)
+
+                status = exchange_data.get("overall_exchange_status", "").lower()
+                
+                # collect run summery data
+                add_run_summery_status(exchange_status=status,run_summery_status_dict=run_summery_status)
+                total_currency_pairs_configured += exchange_data["total_currency_pairs_configured"]
+                successful_currency_pair_initializations += exchange_data["successful_currency_pair_initializations"]
+                failed_currency_pair_initializations += exchange_data["failed_currency_pair_initializations"]
+                total_data_points_sent_to_redis += exchange_data["total_data_points_sent_to_redis"]
+
+
+                # send ExchangeScrapeReport
+                send_metric_log(
+                    ExchangeScrapeReport(
+                        run_id=str(session_run_id),
+                        exchange_name=exchange_name,
+                        total_currency_pairs_configured=exchange_data["total_currency_pairs_configured"],
+                        successful_currency_pair_initializations=exchange_data["successful_currency_pair_initializations"],
+                        failed_currency_pair_initializations=exchange_data["failed_currency_pair_initializations"],
+                        total_data_points_sent_to_redis=exchange_data["total_data_points_sent_to_redis"],
+                        errors_summary=exchange_data["errors_summary"],
+                        overall_exchange_status=status,
+                ))
+
+            end = time.perf_counter()
+            total_run_duration_ms = (end - start) * 1000
+
+            # send ScraperRunSummary
+            send_metric_log(
+                ScraperRunSummary(
+                    run_id=str(session_run_id),
+                    total_run_duration_ms=total_run_duration_ms,
+                    total_exchanges_configured=total_exchanges_configured,
+                    fully_successful_exchange_scrapes=run_summery_status["fully_successful_exchange_scrapes"],
+                    fully_successful_with_errors_exchange_scrapes=run_summery_status["fully_successful_with_errors_exchange_scrapes"],
+                    partial_success_exchange_scrapes=run_summery_status["partial_success_exchange_scrapes"],
+                    fully_failed_exchange_scrapes=run_summery_status["fully_failed_exchange_scrapes"],
+                    total_currency_pairs_configured=total_currency_pairs_configured,
+                    successful_currency_pair_initializations=successful_currency_pair_initializations,
+                    failed_currency_pair_initializations=failed_currency_pair_initializations,
+                    total_data_points_sent_to_redis=total_data_points_sent_to_redis,
+                    errors_summary=aggregated_errors_summary
+            ))
+
+        except Exception as e:
+            logger.exception("Error during generate_and_log_scrape_summaries", exc_info=e)    
+
+def get_or_create_currency_metrics(exchange_metrics: dict, db_symbol: str, currency_id: str):
+    if db_symbol not in exchange_metrics["currency_metrics"]:
+        exchange_metrics["currency_metrics"][db_symbol] = {
+            "currency_pair": db_symbol,
+            "data_point_id": str(currency_id),
+            "initial_latency_ms":0,
+            "latency_avg_ms":0.0,
+            "points_send_to_redis":0,
+            "duration_ms":0,
+            "error_details":{},
+            "status":"failed",
+            "avg_volume_count": 0,
+        }
+
+    return exchange_metrics["currency_metrics"][db_symbol]
+
+def update_latency_avg(metrics: dict, current_latency_ms: float):
+    count = metrics.get("avg_volume_count", 0)
+    avg = metrics.get("latency_avg_ms", 0)
+
+    new_sum = avg * count + current_latency_ms
+    new_count = count + 1
+
+    metrics["latency_avg_ms"] = new_sum / new_count
+    metrics["avg_volume_count"] = new_count
