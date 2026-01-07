@@ -42,7 +42,6 @@ else:
     print(f"REDIS_HOST: {REDIS_HOST}")
     print("Running in non-local testing environment. Relying on existing environment variables.")
 
-print("test")
 run_id = str(uuid.uuid4())
 # run duration for dev (for production put "inf" or remove the "stop_task")
 duration = 90
@@ -130,7 +129,6 @@ async def main(event:asyncio.Event,run_id:str):
         print("Error: Could not connect to Redis. Exiting.")
         raise ConnectionError("Failed to connect to Redis.")
  
-    # async with Stealth().use_async(async_playwright()) as p:
     async with async_playwright() as p:
         global run_summary_data
         tasks =[]
@@ -151,7 +149,15 @@ async def main(event:asyncio.Event,run_id:str):
                 browser = await p.chromium.launch(headless=False, args=["--start-maximized"])
                 exchange_context = await browser.new_context(no_viewport=True)
             
-            task = asyncio.create_task(exchange["fn"](exchange_context,redis_client,exchange_name=exchange["name"],event=event,delay_per_task=delay_per_task,run_id=run_id))
+            task = asyncio.create_task(
+                exchange["fn"](exchange_context,
+                redis_client,
+                exchange_name=exchange["name"],
+                event=event,
+                delay_per_task=delay_per_task,
+                run_id=run_id
+                ))
+            
             tasks.append(task)
         results = []
 
